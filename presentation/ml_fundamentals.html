@@ -1,0 +1,2135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning Fundamentals</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+  :root {
+    --blue: #2563eb;    /* inputs / data      */
+    --orange: #f59e0b;  /* weights / params   */
+    --green: #16a34a;   /* outputs / correct  */
+    --red: #dc2626;     /* error / loss       */
+    --purple: #7c3aed;  /* hidden layers      */
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --soft: #f3f4f6;
+    --r-main-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --r-heading-font: var(--r-main-font);
+    --r-main-color: var(--ink);
+    --r-heading-color: #111827;
+    --r-main-font-size: 30px;
+    --r-heading-text-transform: none;
+    --r-heading1-size: 2.2em;
+    --r-heading2-size: 1.5em;
+    --r-heading3-size: 1.1em;
+    --r-link-color: var(--blue);
+  }
+  .reveal .slides section { text-align: left; }
+  .reveal .slides section.center, .reveal .slides section.section-title { text-align: center; }
+  .reveal h2 { margin-bottom: 0.5em; border-bottom: 4px solid var(--blue); padding-bottom: 0.15em; display: inline-block; }
+  .reveal ul, .reveal ol { margin-left: 1em; }
+  .reveal li { margin: 0.25em 0; }
+  .reveal small, .reveal .muted { color: var(--muted); }
+  .reveal table { font-size: 0.75em; margin: 0.4em 0; }
+  .reveal table th { background: var(--soft); }
+  .reveal table th, .reveal table td { padding: 0.3em 0.7em; border-bottom: 1px solid #e5e7eb; }
+  .reveal svg text { font-family: var(--r-main-font); }
+  .reveal .katex { font-size: 1.05em; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; align-items: center; }
+  .cols.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cols.c4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .cols.wide-left { grid-template-columns: 1.4fr 1fr; }
+  .cols.wide-right { grid-template-columns: 1fr 1.4fr; }
+  .cols.top { align-items: start; }
+
+  .plain { background: #ecfdf5; border-left: 6px solid var(--green); padding: 0.5em 0.8em; border-radius: 6px; font-size: 0.8em; margin: 0.5em 0; }
+  .plain::before { content: "In plain English: "; font-weight: 700; color: var(--green); }
+  .note { background: #eff6ff; border-left: 6px solid var(--blue); padding: 0.5em 0.8em; border-radius: 6px; font-size: 0.8em; margin: 0.5em 0; }
+  .warn { background: #fef2f2; border-left: 6px solid var(--red); padding: 0.5em 0.8em; border-radius: 6px; font-size: 0.8em; margin: 0.5em 0; }
+  .card { background: var(--soft); border-radius: 10px; padding: 0.6em 0.8em; font-size: 0.75em; height: 100%; box-sizing: border-box; }
+  .card h3 { margin: 0 0 0.3em 0; font-size: 1.15em; }
+  .big { font-size: 1.3em; }
+  .small { font-size: 0.75em; }
+  .tiny { font-size: 0.6em; }
+  .center-text { text-align: center; }
+  .blue { color: var(--blue); } .orange { color: var(--orange); } .green { color: var(--green); }
+  .red { color: var(--red); } .purple { color: var(--purple); }
+  .pill { display: inline-block; padding: 0.1em 0.6em; border-radius: 999px; font-size: 0.7em; font-weight: 600; color: white; }
+  .bg-blue { background: var(--blue); } .bg-green { background: var(--green); } .bg-red { background: var(--red); }
+  .bg-orange { background: var(--orange); } .bg-purple { background: var(--purple); }
+  .eq { text-align: center; margin: 0.4em 0; }
+
+  .section-title h1 { color: white; }
+  .section-title p { color: #e0e7ff; font-size: 1.1em; }
+  .section-num { font-size: 3em; font-weight: 800; color: rgba(255,255,255,0.35); line-height: 1; }
+
+  .agenda { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6em; }
+  .agenda div { background: var(--soft); border-radius: 10px; padding: 0.6em; font-size: 0.7em; border-top: 6px solid var(--blue); }
+  .agenda b { display: block; font-size: 1.6em; color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ===================================================== TITLE -->
+<section class="center" data-background-gradient="linear-gradient(135deg, #1e3a8a, #7c3aed)">
+  <h1 style="color:white">Machine Learning Fundamentals</h1>
+  <p style="color:#e0e7ff">From "what is ML?" to training neural networks</p>
+  <p style="color:#c7d2fe" class="small">Classification · Regression · Metrics · Loss · Neural Networks · Backprop · Optimizers</p>
+  <p style="color:white; margin-top:1.2em"><b>Satendra Kumar</b></p>
+  <aside class="notes"><p>[Before starting] Press S to open this speaker view, F for fullscreen, Esc for the slide overview.</p>
+<p>Good morning / afternoon everyone, and welcome. Today's session is Machine Learning Fundamentals. We'll go from "what is machine learning?" all the way to how neural networks are trained.</p>
+<p>Introduce yourself: I'm Satendra Kumar. [Add one or two lines about your role, team and experience with ML / data here.] Questions are welcome at any time. Please interrupt me.</p>
+<p>No prior ML background is needed. If you remember school algebra (y equals m x plus c) you have everything you need.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Our Journey Today</h2>
+  <div class="agenda">
+    <div><b>1</b>What is Machine Learning?</div>
+    <div><b>2</b>Regression — predicting numbers</div>
+    <div><b>3</b>Loss functions — measuring "how wrong"</div>
+    <div><b>4</b>Classification — binary, multiclass, multilabel</div>
+    <div><b>5</b>Evaluating models — accuracy, precision, recall, F1</div>
+    <div><b>6</b>Neural networks — neurons, hidden layers, activations (ReLU, sigmoid, softmax), parameters</div>
+    <div><b>7</b>Feedforward &amp; backpropagation</div>
+    <div><b>8</b>Optimization — SGD, Momentum, RMSProp, Adam</div>
+  </div>
+  <p class="note">Each idea builds on the previous one. Colour code used throughout:
+    <span class="pill bg-blue">input / data</span>
+    <span class="pill bg-orange">weights</span>
+    <span class="pill bg-purple">hidden</span>
+    <span class="pill bg-green">output</span>
+    <span class="pill bg-red">error / loss</span></p>
+  <aside class="notes"><p>Here's the roadmap: eight parts, each building on the previous one.</p>
+<p>We start with what ML is, then regression because it has the simplest math. Next comes loss functions, which tell us how wrong a model is. Then classification and how to evaluate a classifier properly.</p>
+<p>The second half is neural networks: what a neuron is, hidden layers, activation functions, how networks learn through backpropagation, and finally the optimizers that drive learning.</p>
+<p>Point out the colour code. Blue is always input, orange is weights, purple is hidden layers, green is output, red is error. It will help you read every diagram.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 1. INTRO -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #1e3a8a, #2563eb)">
+  <div class="section-num">01</div>
+  <h1>What is Machine Learning?</h1>
+  <p>🤔 What do you think?</p>
+  <aside class="notes"><p>Let's start with the most basic question: what exactly is machine learning?</p>
+<p>[Ask the audience] Before I show you an answer, what do you think it is? Take two or three answers.</p>
+<p>Typical answers are "AI", "robots", "computers that think" or "ChatGPT". Acknowledge each one; they're all related. Then say: let's pin down what it actually means.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>So, What Is Machine Learning?</h2>
+  <p class="big center-text">Machine learning is teaching computers to <b class="green">learn from examples</b>, instead of programming every rule by hand.</p>
+  <div class="cols c3 fragment">
+    <div class="card"><h3>📚 Learn</h3>Look at lots of <b class="blue">past examples</b>, e.g. transactions marked fraud or genuine</div>
+    <div class="card"><h3>🔍 Find patterns</h3>Work out the <b class="orange">rules</b> that connect inputs to answers. These rules are the <b>model</b></div>
+    <div class="card"><h3>🎯 Predict</h3>Use those rules to give <b class="green">answers</b> for new data it has never seen</div>
+  </div>
+  <p class="note fragment">"The field of study that gives computers the ability to learn without being explicitly programmed." — Arthur Samuel, 1959</p>
+  <aside class="notes"><p>Here's a simple definition: machine learning is teaching computers to learn from examples, instead of programming every rule by hand.</p>
+<p>[Click] It comes down to three steps. Learn: the computer looks at lots of past examples, such as transactions already labelled fraud or genuine. Find patterns: it works out the rules connecting the inputs to the answers, and those learned rules are what we call a model. Predict: it uses that model on new data it has never seen.</p>
+<p>[Click] This idea is old. Arthur Samuel, who built a checkers program that learned to beat him, described it this way back in 1959.</p>
+<p>Link back to the audience's answers: AI is the broad goal of making machines smart, and machine learning is the most successful way we've found to get there.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Traditional Programming vs Machine Learning</h2>
+  <svg viewBox="0 0 1000 400" width="100%">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker>
+    </defs>
+    <text x="20" y="40" font-size="26" font-weight="700" fill="#374151">Traditional programming</text>
+    <rect x="20" y="60" width="160" height="60" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="100" y="98" text-anchor="middle" font-size="22">Data</text>
+    <rect x="20" y="130" width="160" height="60" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="100" y="168" text-anchor="middle" font-size="22">Rules (you write)</text>
+    <line x1="185" y1="125" x2="330" y2="125" stroke="#374151" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="340" y="85" width="180" height="80" rx="12" fill="#e5e7eb" stroke="#374151" stroke-width="2"/><text x="430" y="132" text-anchor="middle" font-size="22">Computer</text>
+    <line x1="525" y1="125" x2="650" y2="125" stroke="#374151" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="660" y="95" width="180" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="750" y="133" text-anchor="middle" font-size="22">Answers</text>
+
+    <g class="fragment">
+    <text x="20" y="245" font-size="26" font-weight="700" fill="#7c3aed">Machine learning</text>
+    <rect x="20" y="265" width="160" height="60" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="100" y="303" text-anchor="middle" font-size="22">Data</text>
+    <rect x="20" y="315" width="160" height="60" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2" transform="translate(0,20)"/><text x="100" y="373" text-anchor="middle" font-size="22">Answers</text>
+    <line x1="185" y1="330" x2="330" y2="330" stroke="#374151" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="340" y="290" width="180" height="80" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="430" y="337" text-anchor="middle" font-size="22">Learning</text>
+    <line x1="525" y1="330" x2="650" y2="330" stroke="#374151" stroke-width="3" marker-end="url(#arr)"/>
+    <rect x="660" y="300" width="180" height="60" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="750" y="338" text-anchor="middle" font-size="22">Rules (a model)</text>
+    </g>
+  </svg>
+  <p class="plain">Instead of writing the rules ourselves, we show the computer many examples with answers, and it <b>figures out the rules</b> on its own.</p>
+  <aside class="notes"><p>In traditional programming, a developer writes the rules. For example: "if the amount is above 1 lakh and the country is new, flag the transaction". Data goes in, rules are applied, answers come out.</p>
+<p>[Click] In machine learning we flip it around. We give the computer data AND the correct answers, for example thousands of past transactions labelled fraud or genuine, and it works out the rules by itself. Those learned rules are what we call a <b>model</b>.</p>
+<p>Why does this matter? Some rules are too complex to write by hand. Nobody can write rules to recognise a face, but a model can learn them from examples.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>ML Is Everywhere</h2>
+  <div class="cols c3 top">
+    <div class="card"><h3>🏦 Banking</h3>Fraud detection on card transactions, credit scoring, loan default prediction</div>
+    <div class="card"><h3>📧 Email</h3>Spam filtering, smart replies, auto-sorting into folders</div>
+    <div class="card"><h3>🎬 Streaming</h3>"Because you watched…" recommendations</div>
+    <div class="card"><h3>📱 Phones</h3>Face unlock, voice assistants, keyboard autocomplete</div>
+    <div class="card"><h3>🗺️ Maps</h3>Arrival-time prediction, traffic forecasts</div>
+    <div class="card"><h3>🏥 Health</h3>Reading X-rays, predicting patient risk</div>
+  </div>
+  <aside class="notes"><p>You use ML dozens of times a day without noticing.</p>
+<p>In banking: every card swipe is scored for fraud in milliseconds, and credit scores and loan approvals use models.</p>
+<p>Your spam folder, Netflix and YouTube recommendations, face unlock, and Google Maps arrival times are all ML.</p>
+<p>Ask the audience: "Which of these did you use today?" Usually everyone has used at least three.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Three Main Types of Machine Learning</h2>
+  <svg viewBox="0 0 1000 400" width="100%">
+    <rect x="390" y="10" width="220" height="56" rx="12" fill="#111827"/><text x="500" y="46" text-anchor="middle" font-size="24" fill="white" font-weight="700">Machine Learning</text>
+    <path d="M500,66 L500,90 M170,90 L830,90 M170,90 L170,115 M500,90 L500,115 M830,90 L830,115" stroke="#6b7280" stroke-width="3" fill="none"/>
+    <rect x="50" y="115" width="240" height="70" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="170" y="145" text-anchor="middle" font-size="22" font-weight="700" fill="#1e40af">Supervised</text>
+    <text x="170" y="172" text-anchor="middle" font-size="16" fill="#374151">learn from labelled examples</text>
+    <rect x="380" y="115" width="240" height="70" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="500" y="145" text-anchor="middle" font-size="22" font-weight="700" fill="#5b21b6">Unsupervised</text>
+    <text x="500" y="172" text-anchor="middle" font-size="16" fill="#374151">find patterns, no labels</text>
+    <rect x="710" y="115" width="240" height="70" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="830" y="145" text-anchor="middle" font-size="22" font-weight="700" fill="#166534">Reinforcement</text>
+    <text x="830" y="172" text-anchor="middle" font-size="16" fill="#374151">learn by trial &amp; reward</text>
+    <path d="M170,185 L170,210 M90,210 L250,210 M90,210 L90,230 M250,210 L250,230" stroke="#2563eb" stroke-width="3" fill="none"/>
+    <rect x="20" y="230" width="140" height="56" rx="10" fill="white" stroke="#2563eb" stroke-width="3"/><text x="90" y="265" text-anchor="middle" font-size="19" font-weight="700">Classification</text>
+    <rect x="180" y="230" width="140" height="56" rx="10" fill="white" stroke="#2563eb" stroke-width="3"/><text x="250" y="265" text-anchor="middle" font-size="19" font-weight="700">Regression</text>
+    <text x="90" y="315" text-anchor="middle" font-size="15" fill="#374151">Spam or not?</text>
+    <text x="250" y="315" text-anchor="middle" font-size="15" fill="#374151">House price?</text>
+    <path d="M500,185 L500,230" stroke="#7c3aed" stroke-width="3"/>
+    <rect x="430" y="230" width="140" height="56" rx="10" fill="white" stroke="#7c3aed" stroke-width="2"/><text x="500" y="265" text-anchor="middle" font-size="19">Clustering</text>
+    <text x="500" y="315" text-anchor="middle" font-size="15" fill="#374151">Group similar customers</text>
+    <path d="M830,185 L830,230" stroke="#16a34a" stroke-width="3"/>
+    <rect x="760" y="230" width="140" height="56" rx="10" fill="white" stroke="#16a34a" stroke-width="2"/><text x="830" y="265" text-anchor="middle" font-size="19">Agents</text>
+    <text x="830" y="315" text-anchor="middle" font-size="15" fill="#374151">Game AI, robots</text>
+    <rect x="15" y="340" width="310" height="44" rx="8" fill="#fef3c7"/><text x="170" y="368" text-anchor="middle" font-size="17" font-weight="700" fill="#92400e">⭐ Today's focus: supervised learning</text>
+  </svg>
+  <aside class="notes"><p>There are three broad families.</p>
+<p><b>Supervised learning</b>: we have labelled examples, like questions with an answer key. This is by far the most common in industry and it's our focus today. It splits into two kinds: classification and regression.</p>
+<p><b>Unsupervised learning</b>: no labels; the model finds structure by itself, e.g. grouping customers into segments.</p>
+<p><b>Reinforcement learning</b>: an agent learns by trial and error with rewards. Game-playing AI and robotics use it.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Vocabulary: Features and Labels</h2>
+  <p class="small">Example: predicting the price of a house</p>
+  <table>
+    <thead><tr><th class="blue">Area (sq ft)</th><th class="blue">Bedrooms</th><th class="blue">Age (years)</th><th class="green">Price (₹ lakh)</th></tr></thead>
+    <tbody>
+      <tr><td>1000</td><td>2</td><td>5</td><td>55</td></tr>
+      <tr><td>1500</td><td>3</td><td>2</td><td>90</td></tr>
+      <tr><td>800</td><td>1</td><td>15</td><td>35</td></tr>
+      <tr><td>1200</td><td>3</td><td>10</td><td>?</td></tr>
+    </tbody>
+  </table>
+  <div class="cols">
+    <div class="note"><b class="blue">Features (x)</b> — the inputs we know. Also called <i>attributes</i> or <i>variables</i>.</div>
+    <div class="plain" style="margin:0"><b class="green">Label (y)</b> is the answer we want the model to predict. Each row is one <b>example</b> (also called a sample).</div>
+  </div>
+  <aside class="notes"><p>Two words you'll hear constantly.</p>
+<p><b>Features</b> are the inputs we know: here area, bedrooms and age of a house. We write them as x.</p>
+<p>The <b>label</b> is what we want to predict: the price. We write it as y.</p>
+<p>Each row is one example. The last row has a question mark. That's exactly the job of the model: fill in the label for new, unseen examples.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Machine Learning Workflow</h2>
+  <svg viewBox="0 0 1000 220" width="100%">
+    <defs><marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker></defs>
+    <g font-size="17" text-anchor="middle">
+      <rect x="5" y="40" width="140" height="80" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="75" y="75" font-weight="700">1. Collect</text><text x="75" y="100">data</text>
+      <rect x="175" y="40" width="140" height="80" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="245" y="75" font-weight="700">2. Clean &amp;</text><text x="245" y="100">prepare</text>
+      <rect x="345" y="40" width="140" height="80" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="415" y="75" font-weight="700">3. Choose</text><text x="415" y="100">a model</text>
+      <rect x="515" y="40" width="140" height="80" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="585" y="75" font-weight="700">4. Train</text><text x="585" y="100">(learn)</text>
+      <rect x="685" y="40" width="140" height="80" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="755" y="75" font-weight="700">5. Evaluate</text><text x="755" y="100">on test data</text>
+      <rect x="855" y="40" width="140" height="80" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="925" y="75" font-weight="700">6. Deploy</text><text x="925" y="100">&amp; monitor</text>
+    </g>
+    <g stroke="#6b7280" stroke-width="3" marker-end="url(#arr2)">
+      <line x1="145" y1="80" x2="172" y2="80"/><line x1="315" y1="80" x2="342" y2="80"/><line x1="485" y1="80" x2="512" y2="80"/>
+      <line x1="655" y1="80" x2="682" y2="80"/><line x1="825" y1="80" x2="852" y2="80"/>
+    </g>
+    <path d="M755,120 C755,190 415,190 415,124" stroke="#dc2626" stroke-width="3" fill="none" stroke-dasharray="8 6" marker-end="url(#arr2)"/>
+    <text x="585" y="205" text-anchor="middle" font-size="16" fill="#dc2626">not good enough? tweak &amp; retry</text>
+  </svg>
+  <p class="note">We split data into a <b>training set</b> (to learn from, ~80%) and a <b>test set</b> (to check on unseen data, ~20%) — like practice questions vs. the final exam.</p>
+  <aside class="notes"><p>Every ML project follows roughly these six steps. Collect data, clean it (honestly this is often 70 to 80 percent of the work), choose a model, train it, evaluate it, and deploy it.</p>
+<p>The red dashed arrow matters: it's an iterative loop. If evaluation is poor, we go back and try a different model or better features.</p>
+<p>Key point: we always keep a <b>test set</b> the model never sees during training. It's like keeping the final exam paper hidden while students practise. Otherwise we'd only be measuring memorisation.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 2. REGRESSION -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #065f46, #16a34a)">
+  <div class="section-num">02</div>
+  <h1>Regression</h1>
+  <p>Predicting a number</p>
+  <aside class="notes"><p>Let's start with the simplest type of supervised learning: regression.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>What Is Regression?</h2>
+  <p>Regression answers <b>"How much?"</b> or <b>"How many?"</b> — the output is a <b>continuous number</b>.</p>
+  <div class="cols c4 top">
+    <div class="card"><h3>🏠</h3>House price from area, location, age</div>
+    <div class="card"><h3>💰</h3>Customer's monthly spending</div>
+    <div class="card"><h3>🌡️</h3>Tomorrow's temperature</div>
+    <div class="card"><h3>📈</h3>Next month's sales</div>
+  </div>
+  <p class="plain">If the answer can be 54.3, 54.31 or 54.312 — any value on a number line — it's a regression problem.</p>
+  <aside class="notes"><p>Regression answers "how much?" or "how many?". The output is a number on a continuous scale.</p>
+<p>House prices, customer spending, temperature, sales forecasts.</p>
+<p>A simple test: if the answer can have decimals and any value in between makes sense, it's regression.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Linear Regression: Fit a Straight Line</h2>
+  <div class="cols wide-right">
+    <div>
+      <div class="eq big">$$\hat{y} = {\color{#f59e0b} w}\,{\color{#2563eb} x} + {\color{#f59e0b} b}$$</div>
+      <ul class="small">
+        <li><span class="blue">$x$</span> — input (area)</li>
+        <li>$\hat{y}$ — prediction ("y-hat")</li>
+        <li><span class="orange">$w$</span> — <b>weight</b> / slope: how much price rises per sq ft</li>
+        <li><span class="orange">$b$</span> — <b>bias</b> / intercept: base price</li>
+      </ul>
+      <p class="plain">Learning = finding the <b>w</b> and <b>b</b> that make the line pass as close as possible to all the dots.</p>
+    </div>
+    <svg viewBox="0 0 500 340" width="100%">
+      <line x1="50" y1="300" x2="480" y2="300" stroke="#374151" stroke-width="2"/>
+      <line x1="50" y1="300" x2="50" y2="20" stroke="#374151" stroke-width="2"/>
+      <text x="265" y="332" text-anchor="middle" font-size="16">Area (sq ft) →</text>
+      <text x="20" y="160" text-anchor="middle" font-size="16" transform="rotate(-90 20 160)">Price →</text>
+      <g fill="#2563eb">
+        <circle cx="90" cy="250" r="7"/><circle cx="140" cy="252" r="7"/><circle cx="190" cy="195" r="7"/><circle cx="240" cy="200" r="7"/>
+        <circle cx="290" cy="140" r="7"/><circle cx="340" cy="150" r="7"/><circle cx="390" cy="90" r="7"/><circle cx="440" cy="95" r="7"/>
+      </g>
+      <line class="fragment" x1="60" y1="280" x2="470" y2="60" stroke="#16a34a" stroke-width="4"/>
+    </svg>
+  </div>
+  <aside class="notes"><p>The simplest regression model is a straight line: y-hat equals w times x plus b. It's the same as y equals m x plus c from school.</p>
+<p>x is the input, area. w is the <b>weight</b>, the slope: how much the price goes up per square foot. b is the <b>bias</b>, the starting price.</p>
+<p>[Click to draw the line] Learning simply means finding the w and b that make the line fit the blue dots as closely as possible.</p>
+<p>The words "weight" and "bias" will come back when we get to neural networks. They're exactly the same idea.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Worked Example</h2>
+  <p>Suppose training found: <span class="orange">$w = 0.05$</span> lakh per sq ft and <span class="orange">$b = 10$</span> lakh.</p>
+  <div class="eq">$$\hat{y} = 0.05 \times {\color{#2563eb}1000} + 10 = {\color{#16a34a}60 \text{ lakh}}$$</div>
+  <p class="small">A 1000 sq ft house → predicted price ₹60 lakh.</p>
+  <h3 class="fragment" data-fragment-index="1">More than one feature? Just add more terms</h3>
+  <div class="fragment" data-fragment-index="1">
+    <div class="eq">$$\hat{y} = {\color{#f59e0b}w_1}{\color{#2563eb}x_1} + {\color{#f59e0b}w_2}{\color{#2563eb}x_2} + {\color{#f59e0b}w_3}{\color{#2563eb}x_3} + {\color{#f59e0b}b}$$</div>
+    <div class="eq small">$$\hat{y} = 0.05\cdot\underbrace{1200}_{\text{area}} + 5\cdot\underbrace{3}_{\text{bedrooms}} - 0.8\cdot\underbrace{10}_{\text{age}} + 10 = 60 + 15 - 8 + 10 = {\color{#16a34a}77\text{ lakh}}$$</div>
+    <p class="plain">Each feature gets its own weight. A negative weight (age) means "more of this → lower price".</p>
+  </div>
+  <aside class="notes"><p>Say training gave us w equals 0.05 lakh per square foot and b equals 10 lakh. A 1000 square foot house: 0.05 times 1000 is 50, plus 10, gives 60 lakh.</p>
+<p>[Click] Real problems have many features, so we just add a term per feature, each with its own weight.</p>
+<p>Walk through the example: 1200 square feet gives 60, 3 bedrooms at 5 lakh each gives 15, age 10 years at minus 0.8 gives minus 8, plus the base of 10, which totals 77 lakh.</p>
+<p>Point out the negative weight on age: the model learned older houses are cheaper. The weights tell us how each feature affects the prediction.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>How Wrong Is Our Line? Residuals</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>For each point, the <b class="red">error (residual)</b> is the gap between the real value and the prediction:</p>
+      <div class="eq">$$\text{error}_i = y_i - \hat{y}_i$$</div>
+      <p class="plain">The red lines show how far off we are. A good model makes these lines <b>short</b>. To compare models we need <b>one number</b> that sums up all the red lines — that's a <b>loss function</b>.</p>
+    </div>
+    <svg viewBox="0 0 500 340" width="100%">
+      <line x1="50" y1="300" x2="480" y2="300" stroke="#374151" stroke-width="2"/>
+      <line x1="50" y1="300" x2="50" y2="20" stroke="#374151" stroke-width="2"/>
+      <line x1="60" y1="280" x2="470" y2="60" stroke="#16a34a" stroke-width="4"/>
+      <g stroke="#dc2626" stroke-width="3">
+        <line x1="90" y1="250" x2="90" y2="263.9"/><line x1="140" y1="252" x2="140" y2="237"/><line x1="190" y1="195" x2="190" y2="210"/>
+        <line x1="240" y1="200" x2="240" y2="183.4"/><line x1="290" y1="140" x2="290" y2="156.6"/><line x1="340" y1="150" x2="340" y2="129.8"/>
+        <line x1="390" y1="90" x2="390" y2="102.9"/><line x1="440" y1="95" x2="440" y2="76.1"/>
+      </g>
+      <g fill="#2563eb">
+        <circle cx="90" cy="250" r="7"/><circle cx="140" cy="252" r="7"/><circle cx="190" cy="195" r="7"/><circle cx="240" cy="200" r="7"/>
+        <circle cx="290" cy="140" r="7"/><circle cx="340" cy="150" r="7"/><circle cx="390" cy="90" r="7"/><circle cx="440" cy="95" r="7"/>
+      </g>
+      <text x="350" y="215" font-size="16" fill="#dc2626">residuals</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>No line passes through every point perfectly. The red vertical lines are the <b>residuals</b> or errors: actual value minus predicted value.</p>
+<p>Some errors are positive (point above the line), some negative (below).</p>
+<p>To decide which line is "best" we need to boil all these red lines down into a single score. That score is called a loss function, which is our next section.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 3. LOSS -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #7f1d1d, #dc2626)">
+  <div class="section-num">03</div>
+  <h1>Loss Functions</h1>
+  <p>One number that says "how wrong" the model is</p>
+  <aside class="notes"><p>Loss functions: how a model knows how wrong it is.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>What Is a Loss Function?</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>A formula that compares <b>predictions</b> with <b>true answers</b></li>
+        <li>Outputs a single number: the <b class="red">loss</b></li>
+        <li><b>Lower = better.</b> Perfect predictions → loss of 0</li>
+        <li>Training = <b>adjusting weights to make the loss smaller</b></li>
+      </ul>
+      <p class="plain">The loss is the model's "score" in a game where the goal is to get as low as possible — like golf.</p>
+    </div>
+    <svg viewBox="0 0 400 300" width="100%">
+      <circle cx="200" cy="150" r="120" fill="#fee2e2"/><circle cx="200" cy="150" r="80" fill="#fecaca"/><circle cx="200" cy="150" r="40" fill="#fca5a5"/><circle cx="200" cy="150" r="10" fill="#dc2626"/>
+      <circle cx="210" cy="140" r="7" fill="#16a34a"/><circle cx="185" cy="165" r="7" fill="#16a34a"/>
+      <circle cx="300" cy="80" r="7" fill="#1f2937"/><circle cx="100" cy="230" r="7" fill="#1f2937"/>
+      <text x="245" y="130" font-size="15" fill="#166534">close → small loss</text>
+      <text x="230" y="60" font-size="15">far → big loss</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>A loss function compares predictions with the true answers and gives back one number.</p>
+<p>Think of it like golf or darts: lower is better, and a perfect score is zero.</p>
+<p>This is the single most important idea in the session: <b>training a model means changing its weights to make the loss smaller</b>. Everything else, including backprop and optimizers, is just machinery to do that efficiently.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Mean Squared Error (MSE) — for Regression</h2>
+  <div class="eq big">$$\text{MSE} = \frac{1}{n}\sum_{i=1}^{n}\big({\color{#16a34a}y_i} - \hat{y}_i\big)^2$$</div>
+  <p class="small center-text">take each error → <b>square</b> it → <b>average</b> them</p>
+  <table style="margin:auto">
+    <thead><tr><th>House</th><th>Actual $y$</th><th>Predicted $\hat y$</th><th>Error</th><th>Error²</th></tr></thead>
+    <tbody>
+      <tr><td>A</td><td>200</td><td>210</td><td class="red">−10</td><td>100</td></tr>
+      <tr><td>B</td><td>300</td><td>280</td><td class="red">+20</td><td>400</td></tr>
+      <tr><td>C</td><td>400</td><td>400</td><td>0</td><td>0</td></tr>
+    </tbody>
+  </table>
+  <div class="eq">$$\text{MSE} = \frac{100 + 400 + 0}{3} \approx {\color{#dc2626}166.7}$$</div>
+  <p class="plain">Squaring makes every error positive (so −10 and +10 don't cancel) and punishes big mistakes much more than small ones.</p>
+  <aside class="notes"><p>The most common regression loss is Mean Squared Error. Three steps: take each error, square it, average them.</p>
+<p>Walk through the table: errors of minus 10, plus 20 and 0. Squared, that's 100, 400 and 0. The average is about 166.7.</p>
+<p>Why square? Two reasons. First, it makes everything positive so errors don't cancel out: minus 10 and plus 10 would otherwise add to zero. Second, it punishes big mistakes far more: an error of 20 counts four times as much as an error of 10, not twice.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>MSE vs MAE — How They Treat Outliers</h2>
+  <div class="cols">
+    <div>
+      <div class="eq">$$\text{MAE} = \frac{1}{n}\sum |y_i - \hat{y}_i|$$</div>
+      <p class="small"><b>Mean Absolute Error</b> just averages the size of the errors (no squaring).</p>
+      <p class="small">Errors: <b>1, 1, 1, 10</b> (one outlier)</p>
+      <ul class="small">
+        <li>MAE $= (1+1+1+10)/4 = 3.25$</li>
+        <li>MSE $= (1+1+1+100)/4 = {\color{#dc2626}25.75}$</li>
+      </ul>
+    </div>
+    <table>
+      <thead><tr><th></th><th>MSE</th><th>MAE</th></tr></thead>
+      <tbody>
+        <tr><td>Big errors</td><td>punished heavily</td><td>treated linearly</td></tr>
+        <tr><td>Outliers</td><td>very sensitive</td><td>robust</td></tr>
+        <tr><td>Units</td><td>squared (₹²)</td><td>same as y (₹)</td></tr>
+        <tr><td>Smooth for maths</td><td>✅ yes</td><td>kink at 0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note"><b>RMSE</b> $= \sqrt{\text{MSE}}$ brings the units back to the original scale — easier to explain: "we're off by about ₹12.9 lakh on average".</p>
+  <aside class="notes"><p>The alternative is Mean Absolute Error: just average the size of the errors, with no squaring.</p>
+<p>Example: errors 1, 1, 1 and one outlier of 10. MAE is 3.25, but MSE jumps to 25.75 because that 10 becomes 100 when squared.</p>
+<p>So MSE is very sensitive to outliers. Use it when big errors are truly bad. MAE is more robust if your data has a few weird values.</p>
+<p>RMSE, the square root of MSE, is handy for reporting because it's back in the original units, like rupees.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Loss Landscape</h2>
+  <div class="cols wide-right">
+    <div>
+      <p>If we try every possible weight $w$ and plot the loss, MSE gives a nice <b>bowl</b> shape.</p>
+      <p class="plain">Training = rolling down to the <b>bottom of the bowl</b>, where the loss is smallest. How we roll down is called <b>optimization</b> (section 8).</p>
+    </div>
+    <svg viewBox="0 0 500 330" width="100%">
+      <line x1="40" y1="290" x2="470" y2="290" stroke="#374151" stroke-width="2"/>
+      <line x1="40" y1="290" x2="40" y2="20" stroke="#374151" stroke-width="2"/>
+      <text x="255" y="320" text-anchor="middle" font-size="16">weight w →</text>
+      <text x="22" y="160" font-size="16" text-anchor="middle" transform="rotate(-90 22 160)" fill="#dc2626">Loss →</text>
+      <path d="M50.0,30.0 L63.3,62.2 L76.7,92.2 L90.0,120.0 L103.3,145.6 L116.7,168.9 L130.0,190.0 L143.3,208.9 L156.7,225.6 L170.0,240.0 L183.3,252.2 L196.7,262.2 L210.0,270.0 L223.3,275.6 L236.7,278.9 L250.0,280.0 L263.3,278.9 L276.7,275.6 L290.0,270.0 L303.3,262.2 L316.7,252.2 L330.0,240.0 L343.3,225.6 L356.7,208.9 L370.0,190.0 L383.3,168.9 L396.7,145.6 L410.0,120.0 L423.3,92.2 L436.7,62.2 L450.0,30.0" fill="none" stroke="#dc2626" stroke-width="4"/>
+      <circle cx="90" cy="120" r="10" fill="#2563eb"/><text x="105" y="110" font-size="15" fill="#2563eb">start (random w)</text>
+      <circle cx="250" cy="280" r="10" fill="#16a34a"/><text x="250" y="265" text-anchor="middle" font-size="15" fill="#16a34a">best w</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>Imagine trying every possible value of the weight w and plotting the loss for each. For MSE we get a smooth bowl.</p>
+<p>We start at a random weight, the blue dot, and want to reach the bottom, the green dot, where the loss is smallest.</p>
+<p>How we roll down this bowl efficiently is the topic of optimization, which comes in the last section. Keep this picture in mind.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Cross-Entropy — for Classification</h2>
+  <div class="cols wide-left top">
+    <div>
+      <p class="small">When the model outputs a <b>probability</b> $p$ that the answer is "yes", we use <b>Binary Cross-Entropy (log loss)</b>:</p>
+      <div class="eq">$$L = -\big[\,y\log(p) + (1-y)\log(1-p)\,\big]$$</div>
+      <p class="small">If the true answer is yes ($y=1$), this simplifies to $L = -\log(p)$:</p>
+      <table>
+        <thead><tr><th>True</th><th>Model says p(yes)</th><th>Loss</th></tr></thead>
+        <tbody>
+          <tr><td>Yes</td><td>0.9 (confident, right)</td><td class="green">0.11</td></tr>
+          <tr><td>Yes</td><td>0.5 (unsure)</td><td>0.69</td></tr>
+          <tr><td>Yes</td><td>0.1 (confident, wrong)</td><td class="red">2.30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <svg viewBox="0 0 470 310" width="100%">
+      <line x1="50" y1="270" x2="440" y2="270" stroke="#374151" stroke-width="2"/>
+      <line x1="50" y1="270" x2="50" y2="20" stroke="#374151" stroke-width="2"/>
+      <text x="245" y="300" text-anchor="middle" font-size="15">p = predicted probability of the true class</text>
+      <text x="25" y="150" font-size="15" text-anchor="middle" transform="rotate(-90 25 150)" fill="#dc2626">loss = −log(p)</text>
+      <text x="50" y="288" font-size="13" text-anchor="middle">0</text><text x="430" y="288" font-size="13" text-anchor="middle">1</text>
+      <path d="M57.6,35.3 L65.2,76.9 L72.8,101.2 L80.4,118.5 L88.0,131.8 L95.6,142.8 L103.2,152.0 L110.8,160.0 L118.4,167.1 L126.0,173.4 L133.6,179.2 L141.2,184.4 L148.8,189.2 L156.4,193.6 L164.0,197.8 L171.6,201.6 L179.2,205.3 L186.8,208.7 L194.4,211.9 L202.0,215.0 L209.6,217.9 L217.2,220.7 L224.8,223.4 L232.4,226.0 L240.0,228.4 L247.6,230.8 L255.2,233.0 L262.8,235.2 L270.4,237.3 L278.0,239.4 L285.6,241.3 L293.2,243.2 L300.8,245.1 L308.4,246.9 L316.0,248.6 L323.6,250.3 L331.2,251.9 L338.8,253.5 L346.4,255.1 L354.0,256.6 L361.6,258.1 L369.2,259.5 L376.8,261.0 L384.4,262.3 L392.0,263.7 L399.6,265.0 L407.2,266.3 L414.8,267.6 L422.4,268.8 L430.0,270.0" fill="none" stroke="#dc2626" stroke-width="4"/>
+      <text x="85" y="60" font-size="14" fill="#dc2626">confident &amp; wrong → huge loss</text>
+      <text x="300" y="232" font-size="14" fill="#16a34a">confident &amp; right → ~0</text>
+    </svg>
+  </div>
+  <p class="plain">Cross-entropy rewards being confident and right, and <b>heavily punishes being confident and wrong</b>.</p>
+  <aside class="notes"><p>For classification the model outputs a probability, so we use a different loss: cross-entropy, also called log loss.</p>
+<p>When the true answer is yes, it simplifies to minus log of p, where p is the probability the model gave to "yes".</p>
+<p>Look at the table: 90 percent confident and right gives a tiny loss of 0.11. Unsure at 50 percent gives 0.69. But 10 percent, which means confident and WRONG, gives 2.30, a big penalty.</p>
+<p>The curve shows it shoots up towards infinity as p approaches 0. Cross-entropy strongly discourages being confidently wrong.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 4. CLASSIFICATION -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #312e81, #7c3aed)">
+  <div class="section-num">04</div>
+  <h1>Classification</h1>
+  <p>Predicting a category</p>
+  <aside class="notes"><p>Now the other big type of supervised learning: classification.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>What Is Classification?</h2>
+  <p>Classification answers <b>"Which one?"</b> — the output is a <b>category (class)</b>.</p>
+  <div class="cols c4 top">
+    <div class="card"><h3>📧</h3>Spam or not spam?</div>
+    <div class="card"><h3>💳</h3>Fraud or genuine transaction?</div>
+    <div class="card"><h3>🏦</h3>Approve or reject loan?</div>
+    <div class="card"><h3>🖼️</h3>Cat, dog or rabbit?</div>
+  </div>
+  <div class="cols">
+    <p class="note"><b>Regression:</b> "What will the house <i>cost</i>?" → ₹77 lakh</p>
+    <p class="note"><b>Classification:</b> "Will the house <i>sell</i> this month?" → Yes / No</p>
+  </div>
+  <aside class="notes"><p>Classification answers "which one?". The output is a category.</p>
+<p>Spam or not, fraud or genuine, approve or reject a loan, cat, dog or rabbit.</p>
+<p>Use the house example to contrast: "what will it cost?" is regression; "will it sell this month, yes or no?" is classification. Same data, different question.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Decision Boundary</h2>
+  <div class="cols wide-right">
+    <div>
+      <p class="small">Plot emails by two features. The model learns a <b>line (boundary)</b> that separates the classes.</p>
+      <ul class="small">
+        <li><span class="red">●</span> Spam</li>
+        <li><span class="blue">●</span> Not spam</li>
+      </ul>
+      <p class="plain">A new email lands on one side of the line → that's its predicted class.</p>
+    </div>
+    <svg viewBox="0 0 500 340" width="100%">
+      <line x1="50" y1="300" x2="480" y2="300" stroke="#374151" stroke-width="2"/>
+      <line x1="50" y1="300" x2="50" y2="20" stroke="#374151" stroke-width="2"/>
+      <text x="265" y="330" text-anchor="middle" font-size="15">count of word "FREE" →</text>
+      <text x="22" y="160" font-size="15" text-anchor="middle" transform="rotate(-90 22 160)">number of links →</text>
+      <polygon points="120,300 480,300 480,20 380,20" fill="#fee2e2" opacity="0.6"/>
+      <polygon points="50,300 120,300 380,20 50,20" fill="#dbeafe" opacity="0.6"/>
+      <line x1="120" y1="300" x2="380" y2="20" stroke="#111827" stroke-width="3" stroke-dasharray="10 6"/>
+      <g fill="#2563eb"><circle cx="80" cy="260" r="7"/><circle cx="110" cy="200" r="7"/><circle cx="90" cy="150" r="7"/><circle cx="150" cy="230" r="7"/><circle cx="130" cy="100" r="7"/><circle cx="180" cy="150" r="7"/><circle cx="70" cy="70" r="7"/><circle cx="210" cy="90" r="7"/></g>
+      <g fill="#dc2626"><circle cx="300" cy="250" r="7"/><circle cx="360" cy="200" r="7"/><circle cx="420" cy="260" r="7"/><circle cx="400" cy="120" r="7"/><circle cx="330" cy="140" r="7"/><circle cx="450" cy="70" r="7"/><circle cx="260" cy="270" r="7"/><circle cx="440" cy="180" r="7"/></g>
+      <g class="fragment"><circle cx="350" cy="80" r="10" fill="none" stroke="#111827" stroke-width="3"/><text x="365" y="65" font-size="15">new email → spam!</text></g>
+    </svg>
+  </div>
+  <aside class="notes"><p>Picture emails plotted by two features: how often "FREE" appears and how many links they contain. Spam (red) clusters at top right, normal email (blue) at bottom left.</p>
+<p>A classifier learns a <b>boundary</b>, here a straight dashed line, that separates the two groups.</p>
+<p>[Click] A new email arrives, we check which side of the line it falls on, and that's the prediction: spam.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Logistic Regression: Turning Scores into Probabilities</h2>
+  <div class="cols wide-left">
+    <div>
+      <p class="small"><b>Step 1</b> — compute a score, exactly like linear regression:</p>
+      <div class="eq">$$z = {\color{#f59e0b}w_1}{\color{#2563eb}x_1} + {\color{#f59e0b}w_2}{\color{#2563eb}x_2} + {\color{#f59e0b}b}$$</div>
+      <p class="small"><b>Step 2</b> — squash it into a probability between 0 and 1 using the <b>sigmoid</b>:</p>
+      <div class="eq">$$p = \sigma(z) = \frac{1}{1 + e^{-z}}$$</div>
+      <p class="small"><b>Step 3</b> — decide: if $p \ge 0.5$ → <b class="red">Spam</b>, else <b class="blue">Not spam</b></p>
+    </div>
+    <svg viewBox="0 0 460 300" width="100%">
+      <line x1="40" y1="260" x2="420" y2="260" stroke="#374151" stroke-width="2"/>
+      <line x1="230" y1="270" x2="230" y2="30" stroke="#9ca3af" stroke-width="1"/>
+      <line x1="40" y1="150" x2="420" y2="150" stroke="#9ca3af" stroke-width="1" stroke-dasharray="6 5"/>
+      <line x1="40" y1="40" x2="420" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="25" y="44" font-size="14" text-anchor="end">1</text><text x="25" y="154" font-size="14" text-anchor="end">0.5</text><text x="25" y="264" font-size="14" text-anchor="end">0</text>
+      <path d="M40.0,259.5 L47.9,259.3 L55.8,259.1 L63.8,258.9 L71.7,258.5 L79.6,258.1 L87.5,257.6 L95.4,256.9 L103.3,256.0 L111.2,254.9 L119.2,253.6 L127.1,251.8 L135.0,249.6 L142.9,246.8 L150.8,243.3 L158.8,239.0 L166.7,233.8 L174.6,227.4 L182.5,219.9 L190.4,211.0 L198.3,200.8 L206.2,189.4 L214.2,176.9 L222.1,163.7 L230.0,150.0 L237.9,136.3 L245.8,123.1 L253.8,110.6 L261.7,99.2 L269.6,89.0 L277.5,80.1 L285.4,72.6 L293.3,66.2 L301.2,61.0 L309.2,56.7 L317.1,53.2 L325.0,50.4 L332.9,48.2 L340.8,46.4 L348.8,45.1 L356.7,44.0 L364.6,43.1 L372.5,42.4 L380.4,41.9 L388.3,41.5 L396.2,41.1 L404.2,40.9 L412.1,40.7 L420.0,40.5" fill="none" stroke="#7c3aed" stroke-width="4"/>
+      <text x="230" y="290" font-size="15" text-anchor="middle">score z →</text>
+      <text x="320" y="120" font-size="15" fill="#dc2626">predict Spam</text>
+      <text x="60" y="200" font-size="15" fill="#2563eb">predict Not spam</text>
+      <text x="300" y="175" font-size="13" fill="#6b7280">threshold 0.5</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>The classic classifier is logistic regression. Despite the name, it's used for classification.</p>
+<p>Step 1: compute a score z exactly like linear regression. This score can be any number, minus 50 or plus 300.</p>
+<p>Step 2: squash it into a probability between 0 and 1 using the sigmoid function. Look at the S-curve: large negative z gives almost 0, large positive gives almost 1, and z of 0 gives exactly 0.5.</p>
+<p>Step 3: apply a threshold, usually 0.5: above it is spam, below it is not spam.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Worked Example: Is This Email Spam?</h2>
+  <p class="small">Learned weights: <span class="orange">$w_1 = 1.5$</span> (per "FREE"), <span class="orange">$w_2 = 0.8$</span> (has link), <span class="orange">$b = -2$</span></p>
+  <p class="small">New email: the word "FREE" appears <span class="blue">2</span> times and it contains a link (<span class="blue">1</span>).</p>
+  <div class="eq">$$z = 1.5 \times {\color{#2563eb}2} + 0.8 \times {\color{#2563eb}1} + (-2) = 3 + 0.8 - 2 = 1.8$$</div>
+  <div class="eq fragment">$$p = \sigma(1.8) = \frac{1}{1 + e^{-1.8}} = \frac{1}{1 + 0.165} \approx {\color{#dc2626}0.86}$$</div>
+  <p class="fragment plain">The model is 86% sure this email is spam. 0.86 ≥ 0.5, so it goes to the spam folder.</p>
+  <aside class="notes"><p>Let's do it with numbers. The weights are 1.5 for each "FREE", 0.8 for having a link, and a bias of minus 2.</p>
+<p>The email has 2 "FREE"s and a link. So z is 3 plus 0.8 minus 2, which is 1.8.</p>
+<p>[Click] Sigmoid of 1.8: e to the minus 1.8 is about 0.165, so 1 over 1.165 is about 0.86.</p>
+<p>[Click] The model is 86 percent sure it's spam. That's above 0.5, so it goes to the spam folder.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Three Flavours of Classification</h2>
+  <div class="cols c3 top">
+    <div class="card" style="border-top:6px solid #2563eb">
+      <h3>Binary</h3>
+      <p>2 classes, pick <b>one</b></p>
+      <p>📧 Spam / Not spam</p>
+      <p>💳 Fraud / Genuine</p>
+      <svg viewBox="0 0 200 60" width="100%"><rect x="10" y="10" width="80" height="40" rx="8" fill="#dc2626"/><text x="50" y="36" font-size="15" fill="white" text-anchor="middle">Spam ✓</text><rect x="110" y="10" width="80" height="40" rx="8" fill="#e5e7eb"/><text x="150" y="36" font-size="15" text-anchor="middle">Not spam</text></svg>
+    </div>
+    <div class="card" style="border-top:6px solid #7c3aed">
+      <h3>Multiclass</h3>
+      <p>3+ classes, pick exactly <b>one</b></p>
+      <p>🐱 Cat / Dog / Rabbit</p>
+      <p>✍️ Digit 0–9</p>
+      <svg viewBox="0 0 200 60" width="100%"><rect x="5" y="10" width="58" height="40" rx="8" fill="#7c3aed"/><text x="34" y="36" font-size="14" fill="white" text-anchor="middle">Cat ✓</text><rect x="71" y="10" width="58" height="40" rx="8" fill="#e5e7eb"/><text x="100" y="36" font-size="14" text-anchor="middle">Dog</text><rect x="137" y="10" width="58" height="40" rx="8" fill="#e5e7eb"/><text x="166" y="36" font-size="14" text-anchor="middle">Rabbit</text></svg>
+    </div>
+    <div class="card" style="border-top:6px solid #16a34a">
+      <h3>Multilabel</h3>
+      <p>Many labels, pick <b>any number</b></p>
+      <p>🎬 Movie genres</p>
+      <p>📷 Photo tags: beach, sunset, people</p>
+      <svg viewBox="0 0 200 60" width="100%"><rect x="5" y="10" width="58" height="40" rx="8" fill="#16a34a"/><text x="34" y="36" font-size="13" fill="white" text-anchor="middle">Action✓</text><rect x="71" y="10" width="58" height="40" rx="8" fill="#e5e7eb"/><text x="100" y="36" font-size="13" text-anchor="middle">Drama</text><rect x="137" y="10" width="58" height="40" rx="8" fill="#16a34a"/><text x="166" y="36" font-size="13" fill="white" text-anchor="middle">Sci-Fi✓</text></svg>
+    </div>
+  </div>
+  <aside class="notes"><p>Classification comes in three flavours, and it's important to recognise which one you have.</p>
+<p><b>Binary</b>: two classes, pick one. Spam or not.</p>
+<p><b>Multiclass</b>: three or more classes, still pick exactly one. A photo is a cat OR a dog OR a rabbit.</p>
+<p><b>Multilabel</b>: many labels, and any number can be true at once. A movie can be Action AND Sci-Fi; a photo can be tagged beach AND sunset AND people.</p>
+<p>Ask: "Is classifying a customer complaint into a department multiclass or multilabel?" It depends: can one complaint belong to several departments?</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Multiclass: The Softmax Function</h2>
+  <div class="cols wide-left">
+    <div>
+      <p class="small">The model produces one raw score $z_k$ per class. <b>Softmax</b> turns them into probabilities that <b>add up to 1</b>:</p>
+      <div class="eq">$$p_k = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}$$</div>
+      <table>
+        <thead><tr><th>Class</th><th>Score $z$</th><th>$e^{z}$</th><th>Probability</th></tr></thead>
+        <tbody>
+          <tr><td>🐱 Cat</td><td>2.0</td><td>7.39</td><td class="green"><b>0.66</b></td></tr>
+          <tr><td>🐶 Dog</td><td>1.0</td><td>2.72</td><td>0.24</td></tr>
+          <tr><td>🐰 Rabbit</td><td>0.1</td><td>1.11</td><td>0.10</td></tr>
+          <tr><td></td><td></td><td>sum = 11.21</td><td>sum = 1.00</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <svg viewBox="0 0 360 300" width="100%">
+      <line x1="40" y1="250" x2="340" y2="250" stroke="#374151" stroke-width="2"/>
+      <rect x="60" y="52" width="70" height="198" fill="#7c3aed"/><text x="95" y="42" font-size="18" text-anchor="middle" font-weight="700">66%</text>
+      <rect x="150" y="178" width="70" height="72" fill="#c4b5fd"/><text x="185" y="168" font-size="18" text-anchor="middle">24%</text>
+      <rect x="240" y="220" width="70" height="30" fill="#c4b5fd"/><text x="275" y="210" font-size="18" text-anchor="middle">10%</text>
+      <text x="95" y="275" font-size="16" text-anchor="middle">Cat</text><text x="185" y="275" font-size="16" text-anchor="middle">Dog</text><text x="275" y="275" font-size="16" text-anchor="middle">Rabbit</text>
+    </svg>
+  </div>
+  <p class="plain">Softmax is a "competition" — classes share 100% of the probability. Pick the class with the highest share: <b>Cat</b>.</p>
+  <aside class="notes"><p>For multiclass, the model produces one raw score per class. Softmax turns these into probabilities that add up to exactly 1.</p>
+<p>Recipe: raise e to the power of each score, then divide each by the total.</p>
+<p>Walk through: scores 2, 1 and 0.1 become 7.39, 2.72 and 1.11. The total is 11.21, so the probabilities are 66, 24 and 10 percent.</p>
+<p>Think of it as a competition: the classes share 100 percent between them. The prediction is the class with the biggest share: cat.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Multilabel: Independent Yes/No for Each Label</h2>
+  <div class="cols">
+    <div>
+      <p class="small">Each label gets its <b>own sigmoid</b> — a separate yes/no question. Probabilities do <b>not</b> need to sum to 1.</p>
+      <div class="eq">$$p_k = \sigma(z_k) = \frac{1}{1+e^{-z_k}} \quad \text{for each label } k$$</div>
+      <p class="small">Movie: <i>"Interstellar"</i> (threshold 0.5)</p>
+    </div>
+    <svg viewBox="0 0 420 260" width="100%">
+      <g font-size="17">
+        <text x="10" y="45">Action</text><rect x="100" y="25" width="276" height="28" fill="#16a34a"/><text x="385" y="45">0.92 ✓</text>
+        <text x="10" y="95">Comedy</text><rect x="100" y="75" width="45" height="28" fill="#d1d5db"/><text x="155" y="95">0.15 ✗</text>
+        <text x="10" y="145">Sci-Fi</text><rect x="100" y="125" width="243" height="28" fill="#16a34a"/><text x="352" y="145">0.81 ✓</text>
+        <text x="10" y="195">Romance</text><rect x="100" y="175" width="171" height="28" fill="#16a34a"/><text x="280" y="195">0.57 ✓</text>
+      </g>
+      <line x1="250" y1="15" x2="250" y2="215" stroke="#dc2626" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="250" y="240" font-size="14" text-anchor="middle" fill="#dc2626">threshold 0.5</text>
+    </svg>
+  </div>
+  <p class="plain">The movie is tagged Action + Sci-Fi + Romance. The sum is 2.45 — that's fine, because each label is decided independently.</p>
+  <aside class="notes"><p>For multilabel, there's no competition. Each label gets its own sigmoid: a separate yes/no question.</p>
+<p>For Interstellar: Action 0.92 yes, Comedy 0.15 no, Sci-Fi 0.81 yes, Romance 0.57 yes.</p>
+<p>The probabilities add up to 2.45, more than 1. That's perfectly fine because each label is decided independently.</p>
+<p>This is the key difference from softmax.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Cheat Sheet: Binary vs Multiclass vs Multilabel</h2>
+  <table style="width:100%">
+    <thead><tr><th></th><th>Binary</th><th>Multiclass</th><th>Multilabel</th></tr></thead>
+    <tbody>
+      <tr><td><b>Question</b></td><td>Yes or no?</td><td>Which one of K?</td><td>Which of K apply?</td></tr>
+      <tr><td><b>Answers per example</b></td><td>exactly 1 of 2</td><td>exactly 1 of K</td><td>0 to K</td></tr>
+      <tr><td><b>Output neurons</b></td><td>1</td><td>K</td><td>K</td></tr>
+      <tr><td><b>Output activation</b></td><td>sigmoid</td><td>softmax</td><td>sigmoid (each)</td></tr>
+      <tr><td><b>Loss function</b></td><td>binary cross-entropy</td><td>categorical cross-entropy</td><td>binary cross-entropy per label</td></tr>
+      <tr><td><b>Example</b></td><td>Fraud?</td><td>Digit 0–9</td><td>Photo tags</td></tr>
+    </tbody>
+  </table>
+  <p class="note small">Categorical cross-entropy: $L = -\sum_k y_k \log(p_k) = -\log(p_{\text{true class}})$. For the cat example: $-\log(0.66) \approx 0.42$.</p>
+  <aside class="notes"><p>This table is worth a photo. For each type: how many output neurons, which activation and which loss.</p>
+<p>Binary: 1 output, sigmoid, binary cross-entropy. Multiclass: K outputs, softmax, categorical cross-entropy. Multilabel: K outputs, a sigmoid on each, binary cross-entropy per label.</p>
+<p>Categorical cross-entropy is simply minus log of the probability given to the correct class. For our cat, that's minus log 0.66, about 0.42.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 5. METRICS -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #78350f, #f59e0b)">
+  <div class="section-num">05</div>
+  <h1>Evaluating a Classifier</h1>
+  <p>Accuracy, confusion matrix, precision, recall, F1</p>
+  <aside class="notes"><p>We've built a classifier. How do we know whether it's any good? This section is the one people get wrong most often in practice.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Accuracy Trap 🪤</h2>
+  <p>A bank has <b>1,000</b> card transactions. Only <b class="red">10</b> are fraud.</p>
+  <p>A "lazy" model predicts <b>"Genuine"</b> for every single transaction.</p>
+  <div class="eq">$$\text{Accuracy} = \frac{990 \text{ correct}}{1000} = {\color{#16a34a}99\%}$$</div>
+  <p class="fragment warn">99% accurate… yet it catches <b>zero</b> fraud cases! When classes are <b>imbalanced</b>, accuracy alone is misleading. We need to look at <i>which kinds</i> of mistakes the model makes.</p>
+  <aside class="notes"><p>Here's a puzzle. 1,000 transactions, only 10 are fraud. A lazy model says "genuine" every time.</p>
+<p>Ask the audience: "What's its accuracy?" Answer: 990 out of 1000, which is 99 percent!</p>
+<p>[Click] But it catches zero fraud. It's completely useless, even though 99 percent sounds great.</p>
+<p>This happens whenever classes are <b>imbalanced</b>, which is very common: fraud, disease and defects are all rare. We need metrics that look at the kinds of mistakes.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Confusion Matrix</h2>
+  <div class="cols wide-right">
+    <div class="small">
+      <p>A table that counts the 4 possible outcomes:</p>
+      <ul>
+        <li><b class="green">TP</b> — True Positive: said yes, was yes ✅</li>
+        <li><b class="green">TN</b> — True Negative: said no, was no ✅</li>
+        <li><b class="red">FP</b> — False Positive: said yes, was no ❌ <i>"false alarm"</i></li>
+        <li><b class="red">FN</b> — False Negative: said no, was yes ❌ <i>"missed it"</i></li>
+      </ul>
+      <p class="plain">The first word (True/False) tells you if the model was right. The second word is what the model <b>predicted</b>.</p>
+    </div>
+    <svg viewBox="0 0 470 380" width="100%">
+      <text x="300" y="25" text-anchor="middle" font-size="18" font-weight="700">Predicted</text>
+      <text x="215" y="60" text-anchor="middle" font-size="16">Positive</text><text x="385" y="60" text-anchor="middle" font-size="16">Negative</text>
+      <text x="30" y="225" text-anchor="middle" font-size="18" font-weight="700" transform="rotate(-90 30 225)">Actual</text>
+      <text x="85" y="150" text-anchor="middle" font-size="16">Positive</text><text x="85" y="310" text-anchor="middle" font-size="16">Negative</text>
+      <rect x="130" y="75" width="170" height="150" fill="#dcfce7" stroke="white" stroke-width="4"/>
+      <rect x="300" y="75" width="170" height="150" fill="#fee2e2" stroke="white" stroke-width="4"/>
+      <rect x="130" y="225" width="170" height="150" fill="#fee2e2" stroke="white" stroke-width="4"/>
+      <rect x="300" y="225" width="170" height="150" fill="#dcfce7" stroke="white" stroke-width="4"/>
+      <text x="215" y="150" text-anchor="middle" font-size="34" font-weight="800" fill="#166534">TP</text><text x="215" y="180" text-anchor="middle" font-size="14">caught it ✓</text>
+      <text x="385" y="150" text-anchor="middle" font-size="34" font-weight="800" fill="#991b1b">FN</text><text x="385" y="180" text-anchor="middle" font-size="14">missed it ✗</text>
+      <text x="215" y="300" text-anchor="middle" font-size="34" font-weight="800" fill="#991b1b">FP</text><text x="215" y="330" text-anchor="middle" font-size="14">false alarm ✗</text>
+      <text x="385" y="300" text-anchor="middle" font-size="34" font-weight="800" fill="#166534">TN</text><text x="385" y="330" text-anchor="middle" font-size="14">correctly ignored ✓</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>The confusion matrix counts four outcomes.</p>
+<p>True Positive: we said yes and it was yes; we caught it. True Negative: we said no and it was no.</p>
+<p>False Positive: we said yes but it was no, a false alarm. False Negative: we said no but it was yes, we missed it.</p>
+<p>Memory trick: the second word (Positive or Negative) is what the model <b>predicted</b>. The first word (True or False) says whether that prediction was right.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Real Example: A COVID Test on 100 People</h2>
+  <div class="cols">
+    <svg viewBox="0 0 470 330" width="100%">
+      <text x="300" y="25" text-anchor="middle" font-size="17" font-weight="700">Test says</text>
+      <text x="215" y="55" text-anchor="middle" font-size="15">Positive</text><text x="385" y="55" text-anchor="middle" font-size="15">Negative</text>
+      <text x="25" y="200" text-anchor="middle" font-size="17" font-weight="700" transform="rotate(-90 25 200)">Really</text>
+      <text x="85" y="135" text-anchor="middle" font-size="15">Sick (10)</text><text x="85" y="265" text-anchor="middle" font-size="15">Healthy (90)</text>
+      <rect x="130" y="70" width="170" height="125" fill="#dcfce7" stroke="white" stroke-width="4"/>
+      <rect x="300" y="70" width="170" height="125" fill="#fee2e2" stroke="white" stroke-width="4"/>
+      <rect x="130" y="195" width="170" height="125" fill="#fee2e2" stroke="white" stroke-width="4"/>
+      <rect x="300" y="195" width="170" height="125" fill="#dcfce7" stroke="white" stroke-width="4"/>
+      <text x="215" y="140" text-anchor="middle" font-size="40" font-weight="800" fill="#166534">8</text><text x="215" y="170" text-anchor="middle" font-size="14">TP</text>
+      <text x="385" y="140" text-anchor="middle" font-size="40" font-weight="800" fill="#991b1b">2</text><text x="385" y="170" text-anchor="middle" font-size="14">FN</text>
+      <text x="215" y="265" text-anchor="middle" font-size="40" font-weight="800" fill="#991b1b">5</text><text x="215" y="295" text-anchor="middle" font-size="14">FP</text>
+      <text x="385" y="265" text-anchor="middle" font-size="40" font-weight="800" fill="#166534">85</text><text x="385" y="295" text-anchor="middle" font-size="14">TN</text>
+    </svg>
+    <div class="small">
+      <ul>
+        <li>10 people are really sick, 90 are healthy</li>
+        <li>Test caught <b class="green">8</b> sick people (TP)</li>
+        <li>Test missed <b class="red">2</b> sick people (FN)</li>
+        <li>Test wrongly flagged <b class="red">5</b> healthy people (FP)</li>
+        <li>Test correctly cleared <b class="green">85</b> healthy people (TN)</li>
+      </ul>
+      <p class="note">We'll compute every metric from these 4 numbers.</p>
+    </div>
+  </div>
+  <aside class="notes"><p>Let's make it concrete. 100 people take a test. 10 are really sick and 90 are healthy.</p>
+<p>The test catches 8 of the sick (TP) and misses 2 (FN). Among the healthy, it wrongly flags 5 (FP) and correctly clears 85 (TN).</p>
+<p>We'll compute every metric from these four numbers: 8, 2, 5 and 85.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Accuracy &amp; Precision</h2>
+  <div class="cols top">
+    <div>
+      <h3>Accuracy</h3>
+      <div class="eq">$$\frac{TP + TN}{TP + TN + FP + FN} = \frac{8 + 85}{100} = {\color{#16a34a}93\%}$$</div>
+      <p class="plain">Out of everyone, how many did the test get right?</p>
+    </div>
+    <div>
+      <h3>Precision</h3>
+      <div class="eq">$$\frac{TP}{TP + FP} = \frac{8}{8 + 5} = {\color{#f59e0b}61.5\%}$$</div>
+      <p class="plain">When the test says "sick", how often is it right? Only ~6 out of 10 positive results are real.</p>
+    </div>
+  </div>
+  <p class="note small"><b>Precision</b> focuses on the <b>Predicted Positive column</b>: "Can I trust a positive result?" High precision = few false alarms.</p>
+  <aside class="notes"><p><b>Accuracy</b>: correct predictions over everything. 8 plus 85 is 93 out of 100: 93 percent. Sounds good.</p>
+<p><b>Precision</b>: of everyone the test called sick, how many really were? 8 out of 13 positives is about 61.5 percent.</p>
+<p>So if you test positive, there's only about a 6-in-10 chance you're actually sick. Precision answers: "Can I trust a positive result?"</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Recall &amp; F1 Score</h2>
+  <div class="cols top">
+    <div>
+      <h3>Recall (Sensitivity)</h3>
+      <div class="eq">$$\frac{TP}{TP + FN} = \frac{8}{8 + 2} = {\color{#2563eb}80\%}$$</div>
+      <p class="plain">Out of all truly sick people, how many did we catch? We found 8 of 10.</p>
+    </div>
+    <div>
+      <h3>F1 Score</h3>
+      <div class="eq">$$F_1 = 2 \cdot \frac{P \cdot R}{P + R} = 2 \cdot \frac{0.615 \times 0.8}{0.615 + 0.8} = {\color{#7c3aed}69.6\%}$$</div>
+      <p class="plain">A single score that balances precision and recall. It's high only when <b>both</b> are high.</p>
+    </div>
+  </div>
+  <p class="note small">Why not a simple average? If P = 100% and R = 1%, average = 50.5% (looks OK!) but F1 = <b>2%</b> — the harmonic mean exposes the weak side.</p>
+  <aside class="notes"><p><b>Recall</b>, also called sensitivity: of everyone who was really sick, how many did we catch? 8 out of 10 is 80 percent.</p>
+<p><b>F1</b> combines precision and recall into one number using the harmonic mean. Here it's about 69.6 percent.</p>
+<p>Why the harmonic mean? It punishes imbalance. Precision 100 percent with recall 1 percent has a simple average of 50.5, which looks fine, but an F1 of only 2 percent, which tells you the truth. F1 is only high when BOTH are high.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Precision or Recall? It Depends on the Cost of Mistakes</h2>
+  <div class="cols top">
+    <div class="card" style="border-top:6px solid #f59e0b">
+      <h3>Favour <span class="orange">Precision</span> when false alarms hurt</h3>
+      <ul>
+        <li>📧 <b>Spam filter</b> — sending your job offer to spam is worse than letting one spam through</li>
+        <li>🔍 <b>Search results</b> — top results must be relevant</li>
+        <li>⚖️ <b>Auto-blocking a customer account</b> — don't lock out genuine users</li>
+      </ul>
+    </div>
+    <div class="card" style="border-top:6px solid #2563eb">
+      <h3>Favour <span class="blue">Recall</span> when misses hurt</h3>
+      <ul>
+        <li>🏥 <b>Cancer screening</b> — missing a patient is dangerous; extra tests are OK</li>
+        <li>💳 <b>Fraud detection</b> — missing fraud costs money; a quick verification call is cheap</li>
+        <li>✈️ <b>Airport security</b> — better to check a few extra bags</li>
+      </ul>
+    </div>
+  </div>
+  <p class="plain">Ask: "Which is worse — a false alarm (FP) or a miss (FN)?" Use <b>F1</b> when both matter.</p>
+  <aside class="notes"><p>Which matters more depends on what a mistake costs.</p>
+<p>Favour <b>precision</b> when false alarms hurt: a spam filter that hides your job offer, or blocking a genuine customer's account.</p>
+<p>Favour <b>recall</b> when misses hurt: cancer screening, where missing a patient can be fatal, or fraud detection, where a quick verification call costs far less than a missed fraud.</p>
+<p>Ask the audience: "For a loan default model, which matters more?" Discuss: missing a defaulter costs money, but rejecting good customers loses business. Often you balance with F1.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Precision–Recall Trade-off</h2>
+  <p class="small">Moving the decision threshold changes which emails are flagged:</p>
+  <svg viewBox="0 0 1000 300" width="100%">
+    <line x1="50" y1="140" x2="950" y2="140" stroke="#374151" stroke-width="3"/>
+    <text x="50" y="175" font-size="16">p = 0</text><text x="950" y="175" font-size="16" text-anchor="end">p = 1</text>
+    <text x="500" y="30" font-size="17" text-anchor="middle">Emails sorted by the model's spam probability</text>
+    <g fill="#2563eb"><circle cx="90" cy="110" r="12"/><circle cx="160" cy="110" r="12"/><circle cx="230" cy="110" r="12"/><circle cx="310" cy="110" r="12"/><circle cx="420" cy="110" r="12"/><circle cx="560" cy="110" r="12"/><circle cx="700" cy="110" r="12"/></g>
+    <g fill="#dc2626"><circle cx="380" cy="110" r="12"/><circle cx="500" cy="110" r="12"/><circle cx="620" cy="110" r="12"/><circle cx="760" cy="110" r="12"/><circle cx="830" cy="110" r="12"/><circle cx="900" cy="110" r="12"/></g>
+    <line x1="350" y1="60" x2="350" y2="200" stroke="#2563eb" stroke-width="3" stroke-dasharray="8 5"/>
+    <text x="350" y="225" text-anchor="middle" font-size="16" fill="#2563eb">low threshold (0.3)</text>
+    <text x="350" y="250" text-anchor="middle" font-size="15">catch all spam → <b>high recall</b>,</text>
+    <text x="350" y="272" text-anchor="middle" font-size="15">more false alarms → lower precision</text>
+    <line x1="730" y1="60" x2="730" y2="200" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 5"/>
+    <text x="730" y="225" text-anchor="middle" font-size="16" fill="#b45309">high threshold (0.8)</text>
+    <text x="730" y="250" text-anchor="middle" font-size="15">only flag sure cases → <b>high precision</b>,</text>
+    <text x="730" y="272" text-anchor="middle" font-size="15">miss some spam → lower recall</text>
+    <circle cx="80" cy="35" r="9" fill="#dc2626"/><text x="95" y="41" font-size="15">spam</text>
+    <circle cx="170" cy="35" r="9" fill="#2563eb"/><text x="185" y="41" font-size="15">not spam</text>
+  </svg>
+  <p class="plain">You can't usually max out both. Raising the threshold trades recall for precision, and lowering it does the opposite.</p>
+  <aside class="notes"><p>The model outputs a probability, and we choose the threshold.</p>
+<p>Low threshold, say 0.3: we flag almost everything suspicious, catch all the spam (high recall), but get more false alarms (lower precision).</p>
+<p>High threshold, say 0.8: we only flag cases we're sure about (high precision), but some spam slips through (lower recall).</p>
+<p>You can't usually max out both. Choosing the threshold is a business decision as much as a technical one.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Confusion Matrix for Multiclass</h2>
+  <div class="cols">
+    <table>
+      <thead><tr><th>Actual ↓ / Predicted →</th><th>🐱 Cat</th><th>🐶 Dog</th><th>🐰 Rabbit</th></tr></thead>
+      <tbody>
+        <tr><td>🐱 Cat</td><td style="background:#dcfce7"><b>8</b></td><td>1</td><td>1</td></tr>
+        <tr><td>🐶 Dog</td><td>2</td><td style="background:#dcfce7"><b>7</b></td><td>1</td></tr>
+        <tr><td>🐰 Rabbit</td><td>0</td><td>1</td><td style="background:#dcfce7"><b>9</b></td></tr>
+      </tbody>
+    </table>
+    <div class="small">
+      <ul>
+        <li>Diagonal = correct. Accuracy $= 24/30 = 80\%$</li>
+        <li>Precision (Cat) $= 8 / (8+2+0) = 80\%$</li>
+        <li>Recall (Cat) $= 8 / (8+1+1) = 80\%$</li>
+        <li>Recall (Dog) $= 7/10 = 70\%$ — dogs are often confused with cats</li>
+      </ul>
+    </div>
+  </div>
+  <p class="plain">Compute precision/recall for each class (treat it as "this class vs the rest"), then average them. A <b>macro average</b> weights every class equally.</p>
+  <aside class="notes"><p>With more classes the matrix grows, here 3 by 3. The diagonal is correct predictions.</p>
+<p>Accuracy is 24 out of 30, which is 80 percent. For each class, treat it as "this class versus the rest". Cat precision: of everything predicted cat (column), 8 out of 10. Cat recall: of all real cats (row), 8 out of 10.</p>
+<p>The matrix also shows <b>where</b> the model gets confused: 2 dogs were called cats. That's very useful for debugging.</p>
+<p>Macro average means computing the metric per class and taking a simple average, so every class counts equally.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Metrics Summary</h2>
+  <table style="width:100%">
+    <thead><tr><th>Metric</th><th>Formula</th><th>Question it answers</th><th>COVID example</th></tr></thead>
+    <tbody>
+      <tr><td><b>Accuracy</b></td><td>$\frac{TP+TN}{\text{all}}$</td><td>How often is the model right overall?</td><td>93%</td></tr>
+      <tr><td><b>Precision</b></td><td>$\frac{TP}{TP+FP}$</td><td>Can I trust a "yes"?</td><td>61.5%</td></tr>
+      <tr><td><b>Recall</b></td><td>$\frac{TP}{TP+FN}$</td><td>Did we find all the real "yes" cases?</td><td>80%</td></tr>
+      <tr><td><b>F1</b></td><td>$\frac{2PR}{P+R}$</td><td>Balance of precision &amp; recall</td><td>69.6%</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Remember: <b>P</b>recision = <b>P</b>redicted positives are correct; <b>R</b>ecall = <b>R</b>eal positives are found.</p>
+  <aside class="notes"><p>One-slide summary. Accuracy: how often right overall. Precision: can I trust a yes. Recall: did I find all the real yeses. F1: balance of the two.</p>
+<p>Mnemonic: <b>P</b>recision is about <b>P</b>redicted positives; <b>R</b>ecall is about <b>R</b>eal positives.</p>
+<p>Pause here for questions before moving on to neural networks.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 6. NEURAL NETWORKS -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #4c1d95, #db2777)">
+  <div class="section-num">06</div>
+  <h1>Neural Networks</h1>
+  <p>Neurons, perceptrons, hidden layers, activation functions, parameters &amp; tuning</p>
+  <aside class="notes"><p>Now the second half: neural networks, the technology behind image recognition, speech and large language models.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Inspired by the Brain</h2>
+  <svg viewBox="0 0 1000 340" width="100%">
+    <defs><marker id="arr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker></defs>
+    <text x="230" y="30" text-anchor="middle" font-size="20" font-weight="700">Biological neuron</text>
+    <g stroke="#db2777" stroke-width="4" fill="none">
+      <path d="M90,90 L170,150"/><path d="M70,160 L170,165"/><path d="M90,240 L170,180"/>
+      <path d="M210,165 L360,165"/><path d="M360,165 L400,130 M360,165 L405,165 M360,165 L400,200"/>
+    </g>
+    <circle cx="190" cy="165" r="30" fill="#fbcfe8" stroke="#db2777" stroke-width="3"/>
+    <text x="70" y="80" font-size="15">dendrites</text><text x="190" y="225" font-size="15" text-anchor="middle">cell body</text>
+    <text x="285" y="150" font-size="15" text-anchor="middle">axon</text><text x="390" y="240" font-size="15" text-anchor="middle">terminals</text>
+    <text x="230" y="290" font-size="15" text-anchor="middle" fill="#374151">receives signals → if strong enough, "fires"</text>
+
+    <text x="480" y="170" font-size="40" fill="#9ca3af">≈</text>
+
+    <text x="760" y="30" text-anchor="middle" font-size="20" font-weight="700">Artificial neuron</text>
+    <g font-size="17">
+      <circle cx="580" cy="90" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="580" y="96" text-anchor="middle">x₁</text>
+      <circle cx="580" cy="165" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="580" y="171" text-anchor="middle">x₂</text>
+      <circle cx="580" cy="240" r="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="580" y="246" text-anchor="middle">x₃</text>
+      <g stroke="#f59e0b" stroke-width="3"><line x1="602" y1="95" x2="730" y2="155"/><line x1="602" y1="165" x2="728" y2="165"/><line x1="602" y1="235" x2="730" y2="175"/></g>
+      <text x="660" y="110" fill="#b45309">w₁</text><text x="660" y="158" fill="#b45309">w₂</text><text x="660" y="225" fill="#b45309">w₃</text>
+      <circle cx="770" cy="165" r="42" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/><text x="770" y="160" text-anchor="middle" font-size="20">Σ + b</text><text x="770" y="185" text-anchor="middle" font-size="16">→ f</text>
+      <line x1="812" y1="165" x2="900" y2="165" stroke="#374151" stroke-width="3" marker-end="url(#arr3)"/>
+      <circle cx="930" cy="165" r="25" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="930" y="171" text-anchor="middle">a</text>
+      <text x="580" y="290" text-anchor="middle" fill="#2563eb">inputs</text><text x="665" y="290" text-anchor="middle" fill="#b45309">weights</text>
+      <text x="770" y="290" text-anchor="middle" fill="#7c3aed">sum + activate</text><text x="930" y="290" text-anchor="middle" fill="#16a34a">output</text>
+    </g>
+  </svg>
+  <aside class="notes"><p>Neural networks are loosely inspired by the brain. A biological neuron receives signals through dendrites, and if the combined signal is strong enough, it fires a signal down its axon.</p>
+<p>An artificial neuron copies the idea: inputs come in, each is multiplied by a weight (how important it is), they're summed with a bias, and an activation function decides the output.</p>
+<p>A small honesty note: it's an inspiration, not a simulation. Real neurons are far more complex.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>What a Single Neuron Computes</h2>
+  <div class="eq big">$$z = \sum_{i=1}^{n} {\color{#f59e0b}w_i}\,{\color{#2563eb}x_i} + {\color{#f59e0b}b} \qquad\qquad a = f(z)$$</div>
+  <ol class="small">
+    <li><b>Multiply</b> each input by its weight (how important is it?)</li>
+    <li><b>Add</b> them up, plus a bias (a baseline nudge)</li>
+    <li><b>Pass</b> through an activation function $f$ (decide how strongly to "fire")</li>
+  </ol>
+  <p class="small">Example: $x = (2, 3)$, $w = (0.5, -1)$, $b = 1$:
+    $\; z = 0.5(2) + (-1)(3) + 1 = -1$, and with ReLU $a = \max(0, -1) = 0$ → the neuron stays quiet.</p>
+  <p class="plain">A neuron is just a weighted vote followed by a decision. Linear regression is a neuron with no activation function!</p>
+  <aside class="notes"><p>The neuron does three things: multiply each input by its weight, add them up plus the bias, then pass the result through an activation function.</p>
+<p>Example: inputs 2 and 3, weights 0.5 and minus 1, bias 1. z is 1 minus 3 plus 1, which is minus 1. With ReLU, a negative becomes 0, so the neuron stays quiet.</p>
+<p>Notice the first part is exactly linear regression. A neuron is linear regression plus a decision step.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Perceptron (1958) — The First Neuron</h2>
+  <div class="cols top">
+    <div>
+      <p class="small">Uses a <b>step function</b>: output is 1 if $z \ge 0$, else 0.</p>
+      <div class="eq">$$\hat{y} = \begin{cases} 1 & \text{if } w_1x_1 + w_2x_2 + b \ge 0 \\ 0 & \text{otherwise} \end{cases}$$</div>
+      <p class="small"><b>Learning rule:</b> for each mistake, nudge the weights toward the right answer:</p>
+      <div class="eq">$$w_i \leftarrow w_i + \eta\,(y - \hat{y})\,x_i$$</div>
+      <p class="tiny muted">$\eta$ (eta) = learning rate, a small step size like 0.1</p>
+    </div>
+    <div>
+      <p class="small"><b>Example: an AND gate</b> with $w_1 = w_2 = 1,\ b = -1.5$</p>
+      <table>
+        <thead><tr><th>$x_1$</th><th>$x_2$</th><th>$z$</th><th>output</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>−1.5</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>−0.5</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>−0.5</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>+0.5</td><td class="green"><b>1</b></td></tr>
+        </tbody>
+      </table>
+      <p class="plain">Fires only when both inputs are on.</p>
+    </div>
+  </div>
+  <aside class="notes"><p>The perceptron was invented by Frank Rosenblatt in 1958. It's the original artificial neuron, using a step function that outputs 1 or 0.</p>
+<p>Its learning rule is simple: when it's wrong, nudge each weight in the direction that would have made it right, scaled by a learning rate.</p>
+<p>The table shows an AND gate with weights 1 and 1 and bias minus 1.5. Only when both inputs are 1 does the sum reach plus 0.5, so it fires.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Perceptron's Limit: XOR</h2>
+  <div class="cols">
+    <div>
+      <svg viewBox="0 0 280 280" width="80%">
+        <line x1="40" y1="240" x2="260" y2="240" stroke="#374151" stroke-width="2"/><line x1="40" y1="240" x2="40" y2="20" stroke="#374151" stroke-width="2"/>
+        <circle cx="70" cy="210" r="16" fill="#2563eb"/><circle cx="230" cy="50" r="16" fill="#2563eb"/>
+        <circle cx="70" cy="50" r="16" fill="#dc2626"/><circle cx="230" cy="210" r="16" fill="#dc2626"/>
+        <text x="70" y="270" text-anchor="middle" font-size="15">0</text><text x="230" y="270" text-anchor="middle" font-size="15">1</text>
+        <text x="25" y="215" text-anchor="middle" font-size="15">0</text><text x="25" y="55" text-anchor="middle" font-size="15">1</text>
+        <line x1="40" y1="160" x2="260" y2="20" stroke="#9ca3af" stroke-width="3" stroke-dasharray="8 5"/>
+        <text x="150" y="150" text-anchor="middle" font-size="40" fill="#dc2626">?</text>
+      </svg>
+    </div>
+    <div class="small">
+      <p><b>XOR</b>: output 1 when inputs are <i>different</i>.</p>
+      <p><span class="red">●</span> = 1 &nbsp;&nbsp; <span class="blue">●</span> = 0</p>
+      <p>No single straight line can separate red from blue!</p>
+      <p class="plain">One neuron can only draw one straight line. To solve harder problems, <b>stack neurons into layers</b> → a neural network.</p>
+    </div>
+  </div>
+  <aside class="notes"><p>But there's a famous problem. XOR outputs 1 only when the inputs are different.</p>
+<p>Look at the plot: the red points are on one diagonal, the blue on the other. Try drawing one straight line that separates them. You can't.</p>
+<p>A single neuron can only draw one straight line. This limitation (pointed out by Minsky and Papert in 1969) stalled the field for years. The fix: stack neurons into layers.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>A Neural Network = Layers of Neurons</h2>
+  <svg viewBox="0 0 1000 380" width="100%">
+    <g stroke="#d1d5db" stroke-width="2">
+      <!-- input(3) -> hidden1(4) -->
+      <line x1="150" y1="110" x2="400" y2="70"/><line x1="150" y1="110" x2="400" y2="155"/><line x1="150" y1="110" x2="400" y2="240"/><line x1="150" y1="110" x2="400" y2="325"/>
+      <line x1="150" y1="200" x2="400" y2="70"/><line x1="150" y1="200" x2="400" y2="155"/><line x1="150" y1="200" x2="400" y2="240"/><line x1="150" y1="200" x2="400" y2="325"/>
+      <line x1="150" y1="290" x2="400" y2="70"/><line x1="150" y1="290" x2="400" y2="155"/><line x1="150" y1="290" x2="400" y2="240"/><line x1="150" y1="290" x2="400" y2="325"/>
+      <!-- hidden1(4) -> hidden2(4) -->
+      <line x1="400" y1="70" x2="620" y2="70"/><line x1="400" y1="70" x2="620" y2="155"/><line x1="400" y1="70" x2="620" y2="240"/><line x1="400" y1="70" x2="620" y2="325"/>
+      <line x1="400" y1="155" x2="620" y2="70"/><line x1="400" y1="155" x2="620" y2="155"/><line x1="400" y1="155" x2="620" y2="240"/><line x1="400" y1="155" x2="620" y2="325"/>
+      <line x1="400" y1="240" x2="620" y2="70"/><line x1="400" y1="240" x2="620" y2="155"/><line x1="400" y1="240" x2="620" y2="240"/><line x1="400" y1="240" x2="620" y2="325"/>
+      <line x1="400" y1="325" x2="620" y2="70"/><line x1="400" y1="325" x2="620" y2="155"/><line x1="400" y1="325" x2="620" y2="240"/><line x1="400" y1="325" x2="620" y2="325"/>
+      <!-- hidden2(4) -> out(2) -->
+      <line x1="620" y1="70" x2="860" y2="150"/><line x1="620" y1="70" x2="860" y2="250"/>
+      <line x1="620" y1="155" x2="860" y2="150"/><line x1="620" y1="155" x2="860" y2="250"/>
+      <line x1="620" y1="240" x2="860" y2="150"/><line x1="620" y1="240" x2="860" y2="250"/>
+      <line x1="620" y1="325" x2="860" y2="150"/><line x1="620" y1="325" x2="860" y2="250"/>
+    </g>
+    <g fill="#dbeafe" stroke="#2563eb" stroke-width="3"><circle cx="150" cy="110" r="26"/><circle cx="150" cy="200" r="26"/><circle cx="150" cy="290" r="26"/></g>
+    <g fill="#ede9fe" stroke="#7c3aed" stroke-width="3"><circle cx="400" cy="70" r="26"/><circle cx="400" cy="155" r="26"/><circle cx="400" cy="240" r="26"/><circle cx="400" cy="325" r="26"/>
+      <circle cx="620" cy="70" r="26"/><circle cx="620" cy="155" r="26"/><circle cx="620" cy="240" r="26"/><circle cx="620" cy="325" r="26"/></g>
+    <g fill="#dcfce7" stroke="#16a34a" stroke-width="3"><circle cx="860" cy="150" r="26"/><circle cx="860" cy="250" r="26"/></g>
+    <g font-size="18" text-anchor="middle" font-weight="700">
+      <text x="150" y="30" fill="#2563eb">Input layer</text><text x="510" y="30" fill="#7c3aed">Hidden layers</text><text x="860" y="30" fill="#16a34a">Output layer</text>
+    </g>
+    <g font-size="15" text-anchor="middle" fill="#374151">
+      <text x="150" y="365">the features</text><text x="510" y="372">learn patterns step by step</text><text x="860" y="300">the prediction</text>
+      <text x="60" y="115">area</text><text x="60" y="205">rooms</text><text x="60" y="295">age</text>
+      <text x="935" y="155">buy</text><text x="935" y="255">skip</text>
+    </g>
+  </svg>
+  <p class="plain">Early layers find simple patterns; later layers combine them into complex ones (edges → shapes → faces). "Deep learning" = many hidden layers.</p>
+  <aside class="notes"><p>A neural network is many neurons organised in layers.</p>
+<p>The <b>input layer</b> is just the features, with no computation. <b>Hidden layers</b> in the middle do the learning. The <b>output layer</b> gives the prediction.</p>
+<p>Every neuron is connected to every neuron in the next layer. This is called a fully connected or dense network, and each grey line is one weight.</p>
+<p>"Deep learning" simply means many hidden layers.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>What Do Hidden Layers Actually Do?</h2>
+  <p class="small">They're called <b>hidden</b> because we never see their values in the data. We only see the inputs and the final output. Each hidden layer <b>turns its inputs into new, more useful features</b>.</p>
+  <svg viewBox="0 0 1000 250" width="100%">
+    <defs><marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker></defs>
+    <g font-size="17" text-anchor="middle">
+      <rect x="10" y="40" width="170" height="130" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+      <text x="95" y="70" font-weight="700">Input</text><text x="95" y="100">raw pixels</text>
+      <g fill="#93c5fd"><rect x="55" y="115" width="15" height="15"/><rect x="72" y="115" width="15" height="15" fill="#1e3a8a"/><rect x="89" y="115" width="15" height="15"/><rect x="106" y="115" width="15" height="15" fill="#1e3a8a"/><rect x="55" y="132" width="15" height="15" fill="#1e3a8a"/><rect x="72" y="132" width="15" height="15"/><rect x="89" y="132" width="15" height="15" fill="#1e3a8a"/><rect x="106" y="132" width="15" height="15"/></g>
+      <rect x="250" y="40" width="200" height="130" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+      <text x="350" y="70" font-weight="700">Hidden layer 1</text><text x="350" y="100">edges &amp; lines</text>
+      <path d="M300,140 L340,120 M360,145 L360,115 M380,120 L410,145" stroke="#7c3aed" stroke-width="4"/>
+      <rect x="520" y="40" width="200" height="130" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+      <text x="620" y="70" font-weight="700">Hidden layer 2</text><text x="620" y="100">shapes: eye, nose</text>
+      <circle cx="590" cy="135" r="12" fill="none" stroke="#7c3aed" stroke-width="4"/><circle cx="650" cy="135" r="12" fill="none" stroke="#7c3aed" stroke-width="4"/>
+      <rect x="790" y="40" width="200" height="130" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+      <text x="890" y="70" font-weight="700">Output</text><text x="890" y="100">"It's a face" 🙂</text>
+      <circle cx="890" cy="138" r="22" fill="none" stroke="#16a34a" stroke-width="3"/><circle cx="882" cy="132" r="3" fill="#16a34a"/><circle cx="898" cy="132" r="3" fill="#16a34a"/><path d="M880,145 Q890,153 900,145" stroke="#16a34a" stroke-width="2" fill="none"/>
+    </g>
+    <g stroke="#374151" stroke-width="3" marker-end="url(#arrh)"><line x1="180" y1="105" x2="246" y2="105"/><line x1="450" y1="105" x2="516" y2="105"/><line x1="720" y1="105" x2="786" y2="105"/></g>
+    <text x="500" y="215" text-anchor="middle" font-size="17" fill="#6b7280">simple patterns → combined patterns → the answer</text>
+  </svg>
+  <p class="note small">🏦 Fraud example: one hidden neuron may learn "large amount + new merchant", another "transaction at 3 a.m. from a new country". The output layer combines these clues into a fraud score.</p>
+  <aside class="notes"><p>Why are they called "hidden"? Because their values aren't in our data. We only see inputs and outputs, and the hidden layers work things out in between.</p>
+<p>Each hidden layer builds new features out of the previous layer's outputs. In face recognition, the first layer learns edges, the next combines edges into shapes like eyes and noses, and the output combines those into "face".</p>
+<p>Nobody programs "detect an eye". The network discovers these features by itself during training.</p>
+<p>The banking example: hidden neurons may learn combinations like "large amount plus new merchant", which the output layer combines into a fraud score.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Hidden Layers in Action: Solving XOR</h2>
+  <div class="cols top">
+    <svg viewBox="0 0 470 300" width="100%">
+      <g stroke="#f59e0b" stroke-width="3">
+        <line x1="70" y1="90" x2="230" y2="90"/><line x1="70" y1="90" x2="230" y2="210"/>
+        <line x1="70" y1="210" x2="230" y2="90"/><line x1="70" y1="210" x2="230" y2="210"/>
+        <line x1="230" y1="90" x2="400" y2="150"/><line x1="230" y1="210" x2="400" y2="150"/>
+      </g>
+      <circle cx="70" cy="90" r="28" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><text x="70" y="97" text-anchor="middle" font-size="18">x₁</text>
+      <circle cx="70" cy="210" r="28" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><text x="70" y="217" text-anchor="middle" font-size="18">x₂</text>
+      <circle cx="230" cy="90" r="32" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/><text x="230" y="97" text-anchor="middle" font-size="17">h₁ OR</text>
+      <circle cx="230" cy="210" r="32" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/><text x="230" y="217" text-anchor="middle" font-size="17">h₂ AND</text>
+      <circle cx="400" cy="150" r="30" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/><text x="400" y="157" text-anchor="middle" font-size="18">y</text>
+      <text x="230" y="40" text-anchor="middle" font-size="16" fill="#7c3aed" font-weight="700">hidden layer</text>
+      <text x="400" y="215" text-anchor="middle" font-size="14">h₁ AND NOT h₂</text>
+      <text x="235" y="285" text-anchor="middle" font-size="14" fill="#6b7280">all neurons use the step function</text>
+    </svg>
+    <div class="small">
+      <ul>
+        <li>$h_1 = \text{step}(x_1 + x_2 - 0.5)$ → "at least one is on" (OR)</li>
+        <li>$h_2 = \text{step}(x_1 + x_2 - 1.5)$ → "both are on" (AND)</li>
+        <li>$y = \text{step}(h_1 - h_2 - 0.5)$ → "OR but not AND"</li>
+      </ul>
+      <table>
+        <thead><tr><th>$x_1$</th><th>$x_2$</th><th>$h_1$</th><th>$h_2$</th><th>$y$</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td><td class="green"><b>1</b></td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td><td class="green"><b>1</b></td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p class="plain">The hidden layer breaks a hard problem into two easy ones (OR, AND), and the output neuron combines them. That's the power of hidden layers.</p>
+  <aside class="notes"><p>Remember XOR, which one neuron couldn't solve? With one hidden layer of just two neurons, it's easy.</p>
+<p>h1 acts as OR: it fires if at least one input is on. h2 acts as AND: it fires only if both are on.</p>
+<p>The output fires when h1 is on but h2 is off: "OR but not AND", which is exactly XOR.</p>
+<p>Walk through the table row by row. The hidden layer breaks a hard problem into simpler ones. In real networks these sub-problems are learned automatically, not designed by hand.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>How Many Hidden Layers and Neurons?</h2>
+  <div class="cols top">
+    <div class="card">
+      <h3>↔️ Width = neurons per layer</h3>
+      <p>More neurons → more patterns detected at that level.</p>
+      <h3>↕️ Depth = number of layers</h3>
+      <p>More layers → more levels of combining (patterns of patterns).</p>
+      <p class="tiny muted"><b>Universal approximation theorem:</b> even one hidden layer with enough neurons can approximate almost any function. In practice, deeper networks learn the same thing with far fewer neurons.</p>
+    </div>
+    <div class="card">
+      <h3>📏 Practical starting points</h3>
+      <ul>
+        <li>Simple tabular data: <b>1–2 hidden layers</b>, 32–128 neurons each</li>
+        <li>Often use powers of 2 (32, 64, 128) and a <b>funnel</b> shape, e.g. 128 → 64 → 32</li>
+        <li>Images, speech, text: dozens to hundreds of layers (CNNs, Transformers)</li>
+        <li>Start small. Grow if you underfit, shrink or regularise if you overfit</li>
+      </ul>
+    </div>
+  </div>
+  <p class="plain">The number of hidden layers and neurons are <b>hyperparameters</b>: you choose them and then check the results on the validation set.</p>
+  <aside class="notes"><p>A very common question: how big should my network be?</p>
+<p>Width is neurons per layer; depth is the number of layers. Depth lets the network build patterns of patterns.</p>
+<p>The universal approximation theorem says even one wide hidden layer can, in theory, approximate almost any function. In practice, deeper networks are more efficient.</p>
+<p>Practical advice: for tabular business data, start with 1 or 2 hidden layers of 32 to 128 neurons, often in a funnel like 128, 64, 32. Images and text need much deeper architectures. Start small and grow if underfitting.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Why Do We Need Activation Functions?</h2>
+  <div class="cols top">
+    <div class="small">
+      <p><b>Without</b> them, two layers collapse into one:</p>
+      <div class="eq">$$W_2(W_1x + b_1) + b_2 = \underbrace{(W_2W_1)}_{W'}x + \underbrace{(W_2b_1 + b_2)}_{b'}$$</div>
+      <p>Still just a straight line, no matter how many layers you stack! 😕</p>
+      <p><b>With</b> a non-linear activation between layers, each neuron adds a "bend". Lots of bends combined can trace any curve.</p>
+    </div>
+    <svg viewBox="0 0 440 300" width="100%">
+      <g transform="translate(0,0)">
+        <rect x="5" y="10" width="200" height="200" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+        <line x1="20" y1="190" x2="190" y2="40" stroke="#dc2626" stroke-width="4"/>
+        <text x="105" y="235" text-anchor="middle" font-size="15" font-weight="700" fill="#dc2626">no activation</text>
+        <text x="105" y="255" text-anchor="middle" font-size="13">always a straight line</text>
+      </g>
+      <g transform="translate(225,0)">
+        <rect x="5" y="10" width="200" height="200" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+        <g fill="#2563eb"><circle cx="25" cy="170" r="5"/><circle cx="55" cy="120" r="5"/><circle cx="85" cy="70" r="5"/><circle cx="115" cy="60" r="5"/><circle cx="145" cy="100" r="5"/><circle cx="175" cy="160" r="5"/></g>
+        <path d="M20,178 L55,120 L85,72 L115,58 L145,100 L190,175" fill="none" stroke="#16a34a" stroke-width="4"/>
+        <text x="105" y="235" text-anchor="middle" font-size="15" font-weight="700" fill="#16a34a">with ReLU</text>
+        <text x="105" y="255" text-anchor="middle" font-size="13">straight pieces join into a curve</text>
+      </g>
+    </svg>
+  </div>
+  <p class="plain">The activation function is the neuron's "decision": how strongly should I fire for this input? It's what lets networks learn curvy, real-world patterns.</p>
+  <aside class="notes"><p>Now, activation functions. Why do we need them at all?</p>
+<p>Without them, each layer is just a multiply and an add. Stack two such layers and the math collapses: W2 times W1 is just another matrix. So 100 layers without activations are no more powerful than one: still a straight line.</p>
+<p>Non-linear activations add a "bend" at each neuron. Combine many bends and you can approximate any curve, as the right-hand picture shows: straight ReLU pieces joining to trace a curved pattern.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Activation Functions at a Glance</h2>
+  <div class="cols c4">
+    <div class="center-text">
+      <svg viewBox="0 0 200 140" width="100%"><line x1="15" y1="120" x2="185" y2="120" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+        <path d="M15,120 L100,120 L100,20 L185,20" fill="none" stroke="#6b7280" stroke-width="4"/></svg>
+      <b>Step</b><br><span class="tiny">0 or 1<br>perceptron</span>
+    </div>
+    <div class="center-text">
+      <svg viewBox="0 0 200 140" width="100%"><line x1="15" y1="120" x2="185" y2="120" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+        <path d="M15.0,118.2 L20.3,117.7 L25.6,117.1 L30.9,116.3 L36.2,115.3 L41.6,114.0 L46.9,112.4 L52.2,110.5 L57.5,108.1 L62.8,105.2 L68.1,101.8 L73.4,97.7 L78.8,93.1 L84.1,87.9 L89.4,82.2 L94.7,76.2 L100.0,70.0 L105.3,63.8 L110.6,57.8 L115.9,52.1 L121.2,46.9 L126.6,42.3 L131.9,38.2 L137.2,34.8 L142.5,31.9 L147.8,29.5 L153.1,27.6 L158.4,26.0 L163.8,24.7 L169.1,23.7 L174.4,22.9 L179.7,22.3 L185.0,21.8" fill="none" stroke="#7c3aed" stroke-width="4"/></svg>
+      <b>Sigmoid</b><br><span class="tiny">0 to 1<br>output layer for yes/no</span>
+    </div>
+    <div class="center-text">
+      <svg viewBox="0 0 200 140" width="100%"><line x1="15" y1="70" x2="185" y2="70" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+        <path d="M15.0,120.0 L20.3,119.9 L25.6,119.9 L30.9,119.8 L36.2,119.8 L41.6,119.6 L46.9,119.3 L52.2,118.9 L57.5,118.2 L62.8,117.1 L68.1,115.3 L73.4,112.4 L78.8,108.1 L84.1,101.8 L89.4,93.1 L94.7,82.2 L100.0,70.0 L105.3,57.8 L110.6,46.9 L115.9,38.2 L121.2,31.9 L126.6,27.6 L131.9,24.7 L137.2,22.9 L142.5,21.8 L147.8,21.1 L153.1,20.7 L158.4,20.4 L163.8,20.2 L169.1,20.2 L174.4,20.1 L179.7,20.1 L185.0,20.0" fill="none" stroke="#2563eb" stroke-width="4"/></svg>
+      <b>Tanh</b><br><span class="tiny">−1 to 1<br>centred at zero</span>
+    </div>
+    <div class="center-text">
+      <svg viewBox="0 0 200 140" width="100%"><line x1="15" y1="120" x2="185" y2="120" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+        <path d="M15,120 L100,120 L185,35" fill="none" stroke="#16a34a" stroke-width="4"/></svg>
+      <b>ReLU</b> $\max(0,z)$<br><span class="tiny">simple &amp; fast<br>default for hidden layers ⭐</span>
+    </div>
+  </div>
+  <p class="note">Plus <b>softmax</b>, which works on a whole layer at once rather than one neuron. Let's look at each one.</p>
+  <aside class="notes"><p>Here are the four main shapes. Step: the original perceptron, just 0 or 1. Sigmoid: a smooth S from 0 to 1. Tanh: an S from minus 1 to 1. ReLU: zero for negatives, a straight line for positives.</p>
+<p>Plus softmax, which is different because it works on a whole layer at once.</p>
+<p>Let's look at each one in a bit more detail.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Sigmoid — "How likely is yes?"</h2>
+  <div class="cols wide-left top">
+    <div class="small">
+      <div class="eq">$$\sigma(z) = \frac{1}{1+e^{-z}} \qquad \text{range: } (0,\ 1)$$</div>
+      <table>
+        <thead><tr><th>$z$</th><th>−5</th><th>−2</th><th>0</th><th>2</th><th>5</th></tr></thead>
+        <tbody><tr><td>$\sigma(z)$</td><td>0.007</td><td>0.12</td><td>0.5</td><td>0.88</td><td>0.993</td></tr></tbody>
+      </table>
+      <p>✅ Output reads as a <b>probability</b></p>
+      <p>✅ Use in the <b>output layer</b> for binary &amp; multilabel classification</p>
+      <p>❌ <b>Vanishing gradient</b>: its slope is at most 0.25 and almost 0 at the ends. Over 5 layers: $0.25^5 \approx 0.001$, so early layers barely learn</p>
+    </div>
+    <svg viewBox="0 0 460 300" width="100%">
+      <line x1="40" y1="260" x2="420" y2="260" stroke="#374151" stroke-width="2"/>
+      <line x1="230" y1="270" x2="230" y2="30" stroke="#9ca3af" stroke-width="1"/>
+      <line x1="40" y1="40" x2="420" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+      <text x="25" y="44" font-size="14" text-anchor="end">1</text><text x="25" y="264" font-size="14" text-anchor="end">0</text>
+      <path d="M40.0,259.5 L47.9,259.3 L55.8,259.1 L63.8,258.9 L71.7,258.5 L79.6,258.1 L87.5,257.6 L95.4,256.9 L103.3,256.0 L111.2,254.9 L119.2,253.6 L127.1,251.8 L135.0,249.6 L142.9,246.8 L150.8,243.3 L158.8,239.0 L166.7,233.8 L174.6,227.4 L182.5,219.9 L190.4,211.0 L198.3,200.8 L206.2,189.4 L214.2,176.9 L222.1,163.7 L230.0,150.0 L237.9,136.3 L245.8,123.1 L253.8,110.6 L261.7,99.2 L269.6,89.0 L277.5,80.1 L285.4,72.6 L293.3,66.2 L301.2,61.0 L309.2,56.7 L317.1,53.2 L325.0,50.4 L332.9,48.2 L340.8,46.4 L348.8,45.1 L356.7,44.0 L364.6,43.1 L372.5,42.4 L380.4,41.9 L388.3,41.5 L396.2,41.1 L404.2,40.9 L412.1,40.7 L420.0,40.5" fill="none" stroke="#7c3aed" stroke-width="4"/>
+      <ellipse cx="80" cy="258" rx="45" ry="14" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 4"/>
+      <ellipse cx="380" cy="42" rx="45" ry="14" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 4"/>
+      <text x="340" y="80" font-size="13" fill="#dc2626">flat → gradient ≈ 0</text>
+      <text x="230" y="290" font-size="15" text-anchor="middle">z →</text>
+    </svg>
+  </div>
+  <p class="plain">Sigmoid squashes any number into 0–1, like a dimmer switch. Great for a final "yes/no probability", but too slow to learn with inside deep networks.</p>
+  <aside class="notes"><p>Sigmoid squashes any input into the range 0 to 1, so the output reads as a probability. That's why it's used in the output layer for binary and multilabel problems.</p>
+<p>Look at the table: minus 5 gives almost 0, 0 gives 0.5, plus 5 gives almost 1.</p>
+<p>The downside is the <b>vanishing gradient</b>. The circled flat regions have almost zero slope, and even the steepest part has a slope of only 0.25. During backprop these slopes multiply layer after layer: 0.25 to the fifth power is about 0.001. Early layers get almost no learning signal. That's why sigmoid is rarely used in hidden layers today.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Tanh — Sigmoid's Zero-Centred Cousin</h2>
+  <div class="cols wide-left top">
+    <div class="small">
+      <div class="eq">$$\tanh(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}} \qquad \text{range: } (-1,\ 1)$$</div>
+      <table>
+        <thead><tr><th>$z$</th><th>−2</th><th>−1</th><th>0</th><th>1</th><th>2</th></tr></thead>
+        <tbody><tr><td>$\tanh(z)$</td><td>−0.96</td><td>−0.76</td><td>0</td><td>0.76</td><td>0.96</td></tr></tbody>
+      </table>
+      <p>✅ Centred at 0 (outputs are both negative and positive), so it usually trains faster than sigmoid</p>
+      <p>✅ Common in <b>recurrent networks</b> (LSTM, GRU)</p>
+      <p>❌ Still flattens at the ends, so gradients still vanish</p>
+    </div>
+    <svg viewBox="0 0 200 140" width="100%">
+      <line x1="15" y1="70" x2="185" y2="70" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+      <line x1="15" y1="20" x2="185" y2="20" stroke="#e5e7eb"/><line x1="15" y1="120" x2="185" y2="120" stroke="#e5e7eb"/>
+      <text x="8" y="24" font-size="9">1</text><text x="4" y="124" font-size="9">−1</text>
+      <path d="M15.0,120.0 L20.3,119.9 L25.6,119.9 L30.9,119.8 L36.2,119.8 L41.6,119.6 L46.9,119.3 L52.2,118.9 L57.5,118.2 L62.8,117.1 L68.1,115.3 L73.4,112.4 L78.8,108.1 L84.1,101.8 L89.4,93.1 L94.7,82.2 L100.0,70.0 L105.3,57.8 L110.6,46.9 L115.9,38.2 L121.2,31.9 L126.6,27.6 L131.9,24.7 L137.2,22.9 L142.5,21.8 L147.8,21.1 L153.1,20.7 L158.4,20.4 L163.8,20.2 L169.1,20.2 L174.4,20.1 L179.7,20.1 L185.0,20.0" fill="none" stroke="#2563eb" stroke-width="3"/>
+    </svg>
+  </div>
+  <p class="plain">Same S-shape as sigmoid, but stretched from −1 to +1, so a neuron can say "strongly no", "neutral" or "strongly yes".</p>
+  <aside class="notes"><p>Tanh is the same S-shape, stretched to go from minus 1 to plus 1, and centred at zero.</p>
+<p>Being zero-centred means outputs are both positive and negative, which generally makes training faster than sigmoid.</p>
+<p>It's still common inside recurrent networks such as LSTMs and GRUs. But it also flattens at the ends, so the vanishing gradient problem remains.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>ReLU — The Default for Hidden Layers ⭐</h2>
+  <div class="cols wide-left top">
+    <div class="small">
+      <div class="eq">$$\text{ReLU}(z) = \max(0,\ z) \qquad \text{range: } [0,\ \infty)$$</div>
+      <table>
+        <thead><tr><th>$z$</th><th>−3</th><th>−1</th><th>0</th><th>2</th><th>5</th></tr></thead>
+        <tbody><tr><td>ReLU</td><td>0</td><td>0</td><td>0</td><td>2</td><td>5</td></tr></tbody>
+      </table>
+      <p>✅ Very fast — just "if negative, make it 0"</p>
+      <p>✅ Slope is exactly 1 for positive inputs, so <b>gradients don't vanish</b> and deep networks can train</p>
+      <p>❌ <b>"Dying ReLU"</b>: a neuron stuck in the negative zone outputs 0 forever and stops learning</p>
+      <p>🔧 Fix: <b>Leaky ReLU</b> $= \max(0.01z,\ z)$ keeps a small slope for negatives. GELU / SiLU are smooth variants used in Transformers</p>
+    </div>
+    <svg viewBox="0 0 200 160" width="100%">
+      <line x1="15" y1="120" x2="185" y2="120" stroke="#9ca3af"/><line x1="100" y1="10" x2="100" y2="130" stroke="#9ca3af"/>
+      <path d="M15,120 L100,120 L185,35" fill="none" stroke="#16a34a" stroke-width="4"/>
+      <path d="M15,128 L100,120" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="5 3"/>
+      <text x="20" y="145" font-size="10" fill="#f59e0b">Leaky ReLU (small slope)</text>
+      <text x="120" y="60" font-size="10" fill="#16a34a">slope = 1</text>
+      <text x="25" y="112" font-size="10" fill="#16a34a">output 0</text>
+    </svg>
+  </div>
+  <p class="plain">ReLU is a one-way gate: negative signals are blocked and positive signals pass through unchanged. Simple, fast, and it works, so it's the first choice for hidden layers.</p>
+  <aside class="notes"><p>ReLU, the Rectified Linear Unit, is the workhorse of modern deep learning. The rule couldn't be simpler: if the input is negative, output 0; otherwise pass it through unchanged.</p>
+<p>Why is it so popular? It's extremely cheap to compute, and for positive inputs the slope is exactly 1, so gradients don't shrink as they flow back. This is a big part of why very deep networks became trainable around 2010 to 2012.</p>
+<p>One weakness: "dying ReLU". If a neuron's input is always negative, it always outputs 0 and its gradient is 0, so it stops learning forever. Leaky ReLU fixes this with a tiny slope for negatives. GELU and SiLU are smooth variants used in Transformers like GPT.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Softmax — Picking One Class Out of Many</h2>
+  <div class="cols wide-left top">
+    <div class="small">
+      <div class="eq">$$\text{softmax}(z)_k = \frac{e^{z_k}}{\sum_j e^{z_j}}$$</div>
+      <ul>
+        <li>Applied to the <b>whole output layer</b>, not to one neuron</li>
+        <li>Every output is between 0 and 1, and they <b>add up to 1</b></li>
+        <li>$e^{z}$ makes the largest score stand out even more ("soft" version of picking the max)</li>
+        <li>Use in the <b>output layer for multiclass</b> problems, paired with categorical cross-entropy</li>
+      </ul>
+    </div>
+    <svg viewBox="0 0 400 260" width="100%">
+      <defs><marker id="arrs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker></defs>
+      <g font-size="15" text-anchor="middle">
+        <text x="60" y="25" font-weight="700">raw scores</text><text x="330" y="25" font-weight="700">probabilities</text>
+        <rect x="20" y="45" width="80" height="45" rx="8" fill="#ede9fe"/><text x="60" y="73">Cat 2.0</text>
+        <rect x="20" y="105" width="80" height="45" rx="8" fill="#ede9fe"/><text x="60" y="133">Dog 1.0</text>
+        <rect x="20" y="165" width="80" height="45" rx="8" fill="#ede9fe"/><text x="60" y="193">Rab 0.1</text>
+        <rect x="150" y="80" width="100" height="100" rx="12" fill="#7c3aed"/><text x="200" y="135" fill="white" font-weight="700">softmax</text>
+        <rect x="290" y="45" width="85" height="45" rx="8" fill="#16a34a"/><text x="332" y="73" fill="white">0.66</text>
+        <rect x="290" y="105" width="85" height="45" rx="8" fill="#bbf7d0"/><text x="332" y="133">0.24</text>
+        <rect x="290" y="165" width="85" height="45" rx="8" fill="#bbf7d0"/><text x="332" y="193">0.10</text>
+        <text x="332" y="240" fill="#6b7280">sum = 1.00</text>
+      </g>
+      <g stroke="#374151" stroke-width="2" marker-end="url(#arrs)"><line x1="100" y1="67" x2="146" y2="110"/><line x1="100" y1="127" x2="146" y2="130"/><line x1="100" y1="187" x2="146" y2="150"/>
+        <line x1="250" y1="110" x2="286" y2="67"/><line x1="250" y1="130" x2="286" y2="127"/><line x1="250" y1="150" x2="286" y2="187"/></g>
+    </svg>
+  </div>
+  <p class="plain">Softmax is a vote where the classes share 100% of the probability. Raising one class's share must lower the others.</p>
+  <aside class="notes"><p>We met softmax in classification. In a neural network it sits on the output layer for multiclass problems.</p>
+<p>Unlike the others, it isn't applied to each neuron separately. It looks at all output scores together and turns them into probabilities that sum to 1.</p>
+<p>The exponential exaggerates differences, so the largest score gets a bigger share. That's why it's called a "soft" max: it mostly picks the winner but keeps some probability for the others.</p>
+<p>It's always paired with categorical cross-entropy loss.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Cheat Sheet: Which Activation Goes Where?</h2>
+  <table style="width:100%">
+    <thead><tr><th>Where</th><th>Activation</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b class="purple">Hidden layers</b></td><td><b>ReLU</b> (or Leaky ReLU / GELU)</td><td>fast, avoids vanishing gradients</td></tr>
+      <tr><td><b class="purple">Hidden layers in RNNs</b></td><td>tanh (and sigmoid gates)</td><td>bounded, zero-centred</td></tr>
+      <tr><td><b class="green">Output: regression</b></td><td><b>none</b> (linear)</td><td>output can be any number</td></tr>
+      <tr><td><b class="green">Output: binary</b></td><td><b>sigmoid</b></td><td>one probability of "yes"</td></tr>
+      <tr><td><b class="green">Output: multiclass</b></td><td><b>softmax</b></td><td>probabilities over K classes that sum to 1</td></tr>
+      <tr><td><b class="green">Output: multilabel</b></td><td><b>sigmoid</b> on each neuron</td><td>independent yes/no per label</td></tr>
+    </tbody>
+  </table>
+  <p class="plain">Use ReLU inside the network. Pick the output activation to match the kind of answer you want.</p>
+  <aside class="notes"><p>The practical rule of thumb: <b>hidden layers use ReLU</b> (or a variant). <b>The output layer depends on the task</b>.</p>
+<p>Regression: no activation, because the output must be able to take any value. Binary: sigmoid. Multiclass: softmax. Multilabel: sigmoid on each output neuron.</p>
+<p>If you remember just one slide from this section, make it this one.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Counting Parameters</h2>
+  <p class="small">Every connection has a <span class="orange">weight</span>; every neuron (except inputs) has a <span class="orange">bias</span>. For each layer:</p>
+  <div class="eq">$$\text{parameters} = (\text{inputs} \times \text{neurons}) + \text{neurons}$$</div>
+  <div class="cols top">
+    <div class="card">
+      <h3>Small network: 3 → 4 → 2</h3>
+      <ul>
+        <li>Layer 1: $3\times4 + 4 = 16$</li>
+        <li>Layer 2: $4\times2 + 2 = 10$</li>
+        <li><b>Total = 26 parameters</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Digit recogniser: 784 → 128 → 10</h3>
+      <p class="tiny muted">(28×28-pixel image = 784 inputs)</p>
+      <ul>
+        <li>Layer 1: $784\times128 + 128 = 100{,}480$</li>
+        <li>Layer 2: $128\times10 + 10 = 1{,}290$</li>
+        <li><b>Total = 101,770 parameters</b></li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">For scale: modern large language models have <b>billions</b> of parameters. More parameters = more capacity to learn, but more data &amp; compute needed and a higher risk of overfitting.</p>
+  <aside class="notes"><p>How many numbers does a network actually learn? Each connection has one weight and each neuron has one bias. So per layer: inputs times neurons, plus neurons.</p>
+<p>Small network, 3 to 4 to 2: 16 plus 10 gives 26 parameters.</p>
+<p>A digit recogniser with 784 pixel inputs, 128 hidden neurons and 10 outputs has already over 100,000 parameters. Modern language models have billions.</p>
+<p>More parameters means more capacity to learn, but you need more data and compute, and there's a higher risk of overfitting.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>🤔 Your Turn: Count the Parameters</h2>
+  <p class="small">A bank's <b>fraud detector</b> for card transactions has two hidden layers and a sigmoid output (probability of fraud). <b>How many parameters does it learn?</b></p>
+  <svg viewBox="0 0 1000 340" width="100%">
+    <g stroke="#d1d5db" stroke-width="1.2">
+      <line x1="130" y1="60.0" x2="400" y2="72.0"/><line x1="130" y1="60.0" x2="400" y2="100.7"/><line x1="130" y1="60.0" x2="400" y2="129.4"/><line x1="130" y1="60.0" x2="400" y2="158.1"/><line x1="130" y1="60.0" x2="400" y2="186.9"/><line x1="130" y1="60.0" x2="400" y2="215.6"/><line x1="130" y1="60.0" x2="400" y2="244.3"/><line x1="130" y1="60.0" x2="400" y2="273.0"/><line x1="130" y1="85.0" x2="400" y2="72.0"/><line x1="130" y1="85.0" x2="400" y2="100.7"/><line x1="130" y1="85.0" x2="400" y2="129.4"/><line x1="130" y1="85.0" x2="400" y2="158.1"/><line x1="130" y1="85.0" x2="400" y2="186.9"/><line x1="130" y1="85.0" x2="400" y2="215.6"/><line x1="130" y1="85.0" x2="400" y2="244.3"/><line x1="130" y1="85.0" x2="400" y2="273.0"/><line x1="130" y1="110.0" x2="400" y2="72.0"/><line x1="130" y1="110.0" x2="400" y2="100.7"/><line x1="130" y1="110.0" x2="400" y2="129.4"/><line x1="130" y1="110.0" x2="400" y2="158.1"/><line x1="130" y1="110.0" x2="400" y2="186.9"/><line x1="130" y1="110.0" x2="400" y2="215.6"/><line x1="130" y1="110.0" x2="400" y2="244.3"/><line x1="130" y1="110.0" x2="400" y2="273.0"/><line x1="130" y1="135.0" x2="400" y2="72.0"/><line x1="130" y1="135.0" x2="400" y2="100.7"/><line x1="130" y1="135.0" x2="400" y2="129.4"/><line x1="130" y1="135.0" x2="400" y2="158.1"/><line x1="130" y1="135.0" x2="400" y2="186.9"/><line x1="130" y1="135.0" x2="400" y2="215.6"/><line x1="130" y1="135.0" x2="400" y2="244.3"/><line x1="130" y1="135.0" x2="400" y2="273.0"/><line x1="130" y1="160.0" x2="400" y2="72.0"/><line x1="130" y1="160.0" x2="400" y2="100.7"/><line x1="130" y1="160.0" x2="400" y2="129.4"/><line x1="130" y1="160.0" x2="400" y2="158.1"/><line x1="130" y1="160.0" x2="400" y2="186.9"/><line x1="130" y1="160.0" x2="400" y2="215.6"/><line x1="130" y1="160.0" x2="400" y2="244.3"/><line x1="130" y1="160.0" x2="400" y2="273.0"/><line x1="130" y1="185.0" x2="400" y2="72.0"/><line x1="130" y1="185.0" x2="400" y2="100.7"/><line x1="130" y1="185.0" x2="400" y2="129.4"/><line x1="130" y1="185.0" x2="400" y2="158.1"/><line x1="130" y1="185.0" x2="400" y2="186.9"/><line x1="130" y1="185.0" x2="400" y2="215.6"/><line x1="130" y1="185.0" x2="400" y2="244.3"/><line x1="130" y1="185.0" x2="400" y2="273.0"/><line x1="130" y1="210.0" x2="400" y2="72.0"/><line x1="130" y1="210.0" x2="400" y2="100.7"/><line x1="130" y1="210.0" x2="400" y2="129.4"/><line x1="130" y1="210.0" x2="400" y2="158.1"/><line x1="130" y1="210.0" x2="400" y2="186.9"/><line x1="130" y1="210.0" x2="400" y2="215.6"/><line x1="130" y1="210.0" x2="400" y2="244.3"/><line x1="130" y1="210.0" x2="400" y2="273.0"/><line x1="130" y1="235.0" x2="400" y2="72.0"/><line x1="130" y1="235.0" x2="400" y2="100.7"/><line x1="130" y1="235.0" x2="400" y2="129.4"/><line x1="130" y1="235.0" x2="400" y2="158.1"/><line x1="130" y1="235.0" x2="400" y2="186.9"/><line x1="130" y1="235.0" x2="400" y2="215.6"/><line x1="130" y1="235.0" x2="400" y2="244.3"/><line x1="130" y1="235.0" x2="400" y2="273.0"/><line x1="130" y1="260.0" x2="400" y2="72.0"/><line x1="130" y1="260.0" x2="400" y2="100.7"/><line x1="130" y1="260.0" x2="400" y2="129.4"/><line x1="130" y1="260.0" x2="400" y2="158.1"/><line x1="130" y1="260.0" x2="400" y2="186.9"/><line x1="130" y1="260.0" x2="400" y2="215.6"/><line x1="130" y1="260.0" x2="400" y2="244.3"/><line x1="130" y1="260.0" x2="400" y2="273.0"/><line x1="130" y1="285.0" x2="400" y2="72.0"/><line x1="130" y1="285.0" x2="400" y2="100.7"/><line x1="130" y1="285.0" x2="400" y2="129.4"/><line x1="130" y1="285.0" x2="400" y2="158.1"/><line x1="130" y1="285.0" x2="400" y2="186.9"/><line x1="130" y1="285.0" x2="400" y2="215.6"/><line x1="130" y1="285.0" x2="400" y2="244.3"/><line x1="130" y1="285.0" x2="400" y2="273.0"/>
+      <line x1="400" y1="72.0" x2="640" y2="105.0"/><line x1="400" y1="72.0" x2="640" y2="150.0"/><line x1="400" y1="72.0" x2="640" y2="195.0"/><line x1="400" y1="72.0" x2="640" y2="240.0"/><line x1="400" y1="100.7" x2="640" y2="105.0"/><line x1="400" y1="100.7" x2="640" y2="150.0"/><line x1="400" y1="100.7" x2="640" y2="195.0"/><line x1="400" y1="100.7" x2="640" y2="240.0"/><line x1="400" y1="129.4" x2="640" y2="105.0"/><line x1="400" y1="129.4" x2="640" y2="150.0"/><line x1="400" y1="129.4" x2="640" y2="195.0"/><line x1="400" y1="129.4" x2="640" y2="240.0"/><line x1="400" y1="158.1" x2="640" y2="105.0"/><line x1="400" y1="158.1" x2="640" y2="150.0"/><line x1="400" y1="158.1" x2="640" y2="195.0"/><line x1="400" y1="158.1" x2="640" y2="240.0"/><line x1="400" y1="186.9" x2="640" y2="105.0"/><line x1="400" y1="186.9" x2="640" y2="150.0"/><line x1="400" y1="186.9" x2="640" y2="195.0"/><line x1="400" y1="186.9" x2="640" y2="240.0"/><line x1="400" y1="215.6" x2="640" y2="105.0"/><line x1="400" y1="215.6" x2="640" y2="150.0"/><line x1="400" y1="215.6" x2="640" y2="195.0"/><line x1="400" y1="215.6" x2="640" y2="240.0"/><line x1="400" y1="244.3" x2="640" y2="105.0"/><line x1="400" y1="244.3" x2="640" y2="150.0"/><line x1="400" y1="244.3" x2="640" y2="195.0"/><line x1="400" y1="244.3" x2="640" y2="240.0"/><line x1="400" y1="273.0" x2="640" y2="105.0"/><line x1="400" y1="273.0" x2="640" y2="150.0"/><line x1="400" y1="273.0" x2="640" y2="195.0"/><line x1="400" y1="273.0" x2="640" y2="240.0"/>
+      <line x1="640" y1="105.0" x2="860" y2="172.0"/><line x1="640" y1="150.0" x2="860" y2="172.0"/><line x1="640" y1="195.0" x2="860" y2="172.0"/><line x1="640" y1="240.0" x2="860" y2="172.0"/>
+    </g>
+    <g fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"><circle cx="130" cy="60.0" r="11"/><circle cx="130" cy="85.0" r="11"/><circle cx="130" cy="110.0" r="11"/><circle cx="130" cy="135.0" r="11"/><circle cx="130" cy="160.0" r="11"/><circle cx="130" cy="185.0" r="11"/><circle cx="130" cy="210.0" r="11"/><circle cx="130" cy="235.0" r="11"/><circle cx="130" cy="260.0" r="11"/><circle cx="130" cy="285.0" r="11"/></g>
+    <g fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"><circle cx="400" cy="72.0" r="13"/><circle cx="400" cy="100.7" r="13"/><circle cx="400" cy="129.4" r="13"/><circle cx="400" cy="158.1" r="13"/><circle cx="400" cy="186.9" r="13"/><circle cx="400" cy="215.6" r="13"/><circle cx="400" cy="244.3" r="13"/><circle cx="400" cy="273.0" r="13"/></g>
+    <g fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"><circle cx="640" cy="105.0" r="15"/><circle cx="640" cy="150.0" r="15"/><circle cx="640" cy="195.0" r="15"/><circle cx="640" cy="240.0" r="15"/></g>
+    <g fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"><circle cx="860" cy="172.0" r="18"/></g>
+    <g font-size="18" text-anchor="middle" font-weight="700">
+      <text x="130" y="30" fill="#2563eb">Input: 10</text><text x="400" y="30" fill="#7c3aed">Hidden 1: 8</text>
+      <text x="640" y="30" fill="#7c3aed">Hidden 2: 4</text><text x="860" y="30" fill="#16a34a">Output: 1</text>
+    </g>
+    <g font-size="14" fill="#374151">
+      <text x="110" y="64" text-anchor="end">amount</text><text x="110" y="89" text-anchor="end">time of day</text>
+      <text x="110" y="114" text-anchor="end">merchant</text><text x="110" y="139" text-anchor="end">country</text>
+      <text x="890" y="177">fraud?</text>
+    </g>
+    <g class="fragment" data-fragment-index="1" font-size="17" text-anchor="middle" font-weight="700" fill="#b45309">
+      <text x="265" y="322">10×8 + 8 = 88</text><text x="520" y="322">8×4 + 4 = 36</text><text x="750" y="322">4×1 + 1 = 5</text>
+    </g>
+  </svg>
+  <div class="cols">
+    <div class="note fragment" data-fragment-index="2" style="margin:0"><b>Total = 88 + 36 + 5 = 129 parameters</b></div>
+    <div class="warn fragment" data-fragment-index="3" style="margin:0">Forgot the biases? Then you get $80 + 32 + 4 = 116$. Each non-input neuron adds one bias: $+13$.</div>
+  </div>
+  <aside class="notes"><p>[Ask the audience] Now you try. Give everyone about a minute, then ask a few people for their totals.</p>
+<p>This network has two hidden layers, so there are three sets of connections to count, not two. The input layer has no parameters of its own; each grey line is one weight.</p>
+<p>[Click] Layer by layer: 10 inputs times 8 neurons is 80 weights, plus 8 biases, 88. Then 8 times 4 is 32, plus 4, 36. Then 4 times 1 is 4, plus 1, 5.</p>
+<p>[Click] Total: 129.</p>
+<p>[Click] Common mistake: if someone said 116, they forgot the biases: one per neuron, 8 plus 4 plus 1 is 13. If someone said something larger, check whether they gave the input layer biases too.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Parameters vs Hyperparameters</h2>
+  <div class="cols top">
+    <div class="card" style="border-top:6px solid #f59e0b">
+      <h3>Parameters — <i>learned</i> by the model</h3>
+      <ul>
+        <li>Weights $w$</li>
+        <li>Biases $b$</li>
+      </ul>
+      <p>Found automatically during training.</p>
+      <p>🍳 Like the <b>taste</b> a dish ends up with.</p>
+    </div>
+    <div class="card" style="border-top:6px solid #7c3aed">
+      <h3>Hyperparameters — <i>chosen</i> by you</h3>
+      <ul>
+        <li>Learning rate $\eta$</li>
+        <li>Number of layers &amp; neurons per layer</li>
+        <li>Activation function</li>
+        <li>Batch size, number of epochs</li>
+        <li>Optimizer (SGD, Adam…)</li>
+        <li>Dropout rate, regularisation strength</li>
+      </ul>
+      <p>🍳 Like the <b>oven temperature &amp; cooking time</b>.</p>
+    </div>
+  </div>
+  <p class="tiny muted"><b>Epoch</b> = one full pass over the training data. <b>Batch size</b> = how many examples are used for each weight update.</p>
+  <aside class="notes"><p>An important distinction. <b>Parameters</b> (weights and biases) are learned automatically during training.</p>
+<p><b>Hyperparameters</b> are the settings YOU choose before training: learning rate, number of layers and neurons, activation, batch size, epochs, optimizer, dropout.</p>
+<p>Cooking analogy: you choose the oven temperature and cooking time (hyperparameters), and the dish's final taste (parameters) is the result.</p>
+<p>Define epoch: one full pass through the training data. Batch size: how many examples we look at before each weight update.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Underfitting vs Overfitting</h2>
+  <svg viewBox="0 0 1000 300" width="100%">
+    <!-- panel 1 -->
+    <g transform="translate(0,0)">
+      <rect x="10" y="10" width="310" height="230" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+      <g fill="#2563eb"><circle cx="40" cy="200" r="6"/><circle cx="70" cy="160" r="6"/><circle cx="100" cy="140" r="6"/><circle cx="130" cy="95" r="6"/><circle cx="160" cy="90" r="6"/><circle cx="190" cy="80" r="6"/><circle cx="220" cy="95" r="6"/><circle cx="250" cy="125" r="6"/><circle cx="280" cy="170" r="6"/><circle cx="300" cy="200" r="6"/></g>
+      <line x1="30" y1="140" x2="310" y2="120" stroke="#dc2626" stroke-width="4"/>
+    </g>
+    <g transform="translate(335,0)">
+      <rect x="10" y="10" width="310" height="230" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+      <g fill="#2563eb"><circle cx="40" cy="200" r="6"/><circle cx="70" cy="160" r="6"/><circle cx="100" cy="140" r="6"/><circle cx="130" cy="95" r="6"/><circle cx="160" cy="90" r="6"/><circle cx="190" cy="80" r="6"/><circle cx="220" cy="95" r="6"/><circle cx="250" cy="125" r="6"/><circle cx="280" cy="170" r="6"/><circle cx="300" cy="200" r="6"/></g>
+      <path d="M30,210 Q170,-20 310,210" fill="none" stroke="#16a34a" stroke-width="4"/>
+    </g>
+    <g transform="translate(670,0)">
+      <rect x="10" y="10" width="310" height="230" rx="10" fill="#f9fafb" stroke="#e5e7eb"/>
+      <g fill="#2563eb"><circle cx="40" cy="200" r="6"/><circle cx="70" cy="160" r="6"/><circle cx="100" cy="140" r="6"/><circle cx="130" cy="95" r="6"/><circle cx="160" cy="90" r="6"/><circle cx="190" cy="80" r="6"/><circle cx="220" cy="95" r="6"/><circle cx="250" cy="125" r="6"/><circle cx="280" cy="170" r="6"/><circle cx="300" cy="200" r="6"/></g>
+      <path d="M30,230 C35,190 38,195 40,200 C50,220 60,150 70,160 C80,170 90,130 100,140 C110,150 120,80 130,95 C140,110 150,70 160,90 C170,110 180,60 190,80 C200,100 210,75 220,95 C230,115 240,105 250,125 C260,145 270,150 280,170 C290,190 295,185 300,200 C305,215 308,225 312,235" fill="none" stroke="#dc2626" stroke-width="3"/>
+    </g>
+    <g font-size="20" text-anchor="middle" font-weight="700">
+      <text x="165" y="270" fill="#dc2626">Underfitting</text><text x="500" y="270" fill="#16a34a">Just right ✓</text><text x="835" y="270" fill="#dc2626">Overfitting</text>
+    </g>
+    <g font-size="15" text-anchor="middle" fill="#374151">
+      <text x="165" y="292">too simple — misses the pattern</text><text x="500" y="292">captures the real trend</text><text x="835" y="292">memorises noise — fails on new data</text>
+    </g>
+  </svg>
+  <p class="plain">Underfitting = a student who didn't study. Overfitting = a student who memorised past papers word-for-word but can't handle a new question.</p>
+  <aside class="notes"><p>The central challenge in ML is getting model complexity right.</p>
+<p><b>Underfitting</b>, on the left: the model is too simple. A straight line can't capture the curve, so it's bad on training data and on new data.</p>
+<p><b>Just right</b>, in the middle: it captures the real trend.</p>
+<p><b>Overfitting</b>, on the right: the model wiggles through every point, including the noise. Perfect on training data but terrible on new data.</p>
+<p>The student analogy: underfitting is not studying; overfitting is memorising last year's paper word-for-word and failing when the questions change.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Spotting Overfitting: Training vs Validation Loss</h2>
+  <div class="cols wide-right">
+    <div class="small">
+      <p>Hold back a <b>validation set</b> the model never trains on.</p>
+      <ul>
+        <li><span class="blue">Training loss</span> keeps falling</li>
+        <li><span class="red">Validation loss</span> falls, then <b>rises</b> → the model has started memorising</li>
+      </ul>
+      <p class="plain"><b>Early stopping</b>: stop training (and keep the weights) at the point where validation loss is lowest.</p>
+    </div>
+    <svg viewBox="0 0 500 320" width="100%">
+      <line x1="50" y1="270" x2="470" y2="270" stroke="#374151" stroke-width="2"/>
+      <line x1="50" y1="270" x2="50" y2="20" stroke="#374151" stroke-width="2"/>
+      <text x="260" y="300" text-anchor="middle" font-size="15">epochs (training time) →</text>
+      <text x="25" y="150" text-anchor="middle" font-size="15" transform="rotate(-90 25 150)">loss →</text>
+      <path d="M50.0,55.0 L60.0,85.7 L70.0,111.7 L80.0,133.7 L90.0,152.3 L100.0,168.1 L110.0,181.4 L120.0,192.7 L130.0,202.3 L140.0,210.4 L150.0,217.2 L160.0,223.0 L170.0,227.9 L180.0,232.1 L190.0,235.6 L200.0,238.6 L210.0,241.1 L220.0,243.2 L230.0,245.0 L240.0,246.6 L250.0,247.9 L260.0,249.0 L270.0,249.9 L280.0,250.7 L290.0,251.3 L300.0,251.9 L310.0,252.4 L320.0,252.8 L330.0,253.1 L340.0,253.4 L350.0,253.7 L360.0,253.9 L370.0,254.0 L380.0,254.2 L390.0,254.3 L400.0,254.4 L410.0,254.5 L420.0,254.6 L430.0,254.6 L440.0,254.7 L450.0,254.7" fill="none" stroke="#2563eb" stroke-width="4"/>
+      <path d="M50.0,40.0 L60.0,70.6 L70.0,96.1 L80.0,117.4 L90.0,135.1 L100.0,149.6 L110.0,161.4 L120.0,170.9 L130.0,178.3 L140.0,184.0 L150.0,188.2 L160.0,191.1 L170.0,192.8 L180.0,193.4 L190.0,193.2 L200.0,192.1 L210.0,190.3 L220.0,187.8 L230.0,184.7 L240.0,181.0 L250.0,176.9 L260.0,172.2 L270.0,167.1 L280.0,161.6 L290.0,155.7 L300.0,149.4 L310.0,142.7 L320.0,135.7 L330.0,128.4 L340.0,120.7 L350.0,112.7 L360.0,104.3 L370.0,95.7 L380.0,86.7 L390.0,77.5 L400.0,67.9" fill="none" stroke="#dc2626" stroke-width="4"/>
+      <line x1="182" y1="30" x2="182" y2="270" stroke="#16a34a" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="182" y="25" text-anchor="middle" font-size="14" fill="#16a34a">stop here</text>
+      <text x="100" y="250" font-size="13" fill="#6b7280">underfitting</text><text x="330" y="200" font-size="13" fill="#6b7280">overfitting →</text>
+      <text x="410" y="245" font-size="14" fill="#2563eb">training</text><text x="405" y="62" font-size="14" fill="#dc2626">validation</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>How do we detect overfitting in practice? Keep a <b>validation set</b> aside and track both losses during training.</p>
+<p>At first both go down: the model is learning real patterns. Then at some point validation loss starts going UP while training loss keeps falling. That's the moment the model starts memorising.</p>
+<p><b>Early stopping</b>: stop training at the lowest validation loss and keep those weights. It's simple and very effective.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Tuning a Neural Network</h2>
+  <div class="cols top">
+    <div class="card">
+      <h3>🔧 Fix underfitting (too simple)</h3>
+      <ul>
+        <li>Add more layers or neurons</li>
+        <li>Train for more epochs</li>
+        <li>Increase the learning rate a little</li>
+        <li>Add better features</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🛡️ Fix overfitting (memorising)</h3>
+      <ul>
+        <li>Get more training data</li>
+        <li><b>Dropout</b> — randomly switch off neurons while training</li>
+        <li><b>L2 regularisation</b> — penalise large weights</li>
+        <li><b>Early stopping</b></li>
+        <li>Use a smaller network</li>
+      </ul>
+    </div>
+  </div>
+  <div class="cols top" style="margin-top:0.5em">
+    <div class="note"><b>Searching for good hyperparameters:</b> <i>Grid search</i> tries every combination; <i>random search</i> samples combinations (often faster); tools like Optuna automate this.</div>
+    <div class="plain" style="margin:0.5em 0">Tune the learning rate first — it matters most. Change one thing at a time and always judge on the <b>validation set</b>.</div>
+  </div>
+  <aside class="notes"><p>Here's the practical toolkit.</p>
+<p>If underfitting: make the model bigger, train longer, raise the learning rate a little, or improve the features.</p>
+<p>If overfitting: get more data (the best fix), add dropout (randomly switching off neurons during training so the network can't rely on any single one), add L2 regularisation (penalising big weights), use early stopping, or shrink the network.</p>
+<p>For searching hyperparameters: grid search tries every combination; random search is often faster; tools like Optuna automate it.</p>
+<p>Top tip: tune the learning rate first, change one thing at a time, and always judge on validation data.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 7. FEEDFORWARD & BACKPROP -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #0c4a6e, #0891b2)">
+  <div class="section-num">07</div>
+  <h1>Feedforward &amp; Backpropagation</h1>
+  <p>How a network makes predictions — and how it learns from mistakes</p>
+  <aside class="notes"><p>Now the heart of it: how does a neural network actually learn? Two phases: feedforward to predict, and backpropagation to learn from the error.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Training Loop</h2>
+  <svg viewBox="0 0 1000 380" width="100%">
+    <defs><marker id="arr4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker></defs>
+    <rect x="370" y="10" width="260" height="80" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+    <text x="500" y="45" text-anchor="middle" font-size="22" font-weight="700">1. Feedforward</text><text x="500" y="72" text-anchor="middle" font-size="16">input → prediction</text>
+    <rect x="700" y="150" width="260" height="80" rx="14" fill="#fee2e2" stroke="#dc2626" stroke-width="3"/>
+    <text x="830" y="185" text-anchor="middle" font-size="22" font-weight="700">2. Compute loss</text><text x="830" y="212" text-anchor="middle" font-size="16">how wrong were we?</text>
+    <rect x="370" y="290" width="260" height="80" rx="14" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/>
+    <text x="500" y="325" text-anchor="middle" font-size="22" font-weight="700">3. Backpropagation</text><text x="500" y="352" text-anchor="middle" font-size="16">who is to blame? (gradients)</text>
+    <rect x="40" y="150" width="260" height="80" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+    <text x="170" y="185" text-anchor="middle" font-size="22" font-weight="700">4. Update weights</text><text x="170" y="212" text-anchor="middle" font-size="16">optimizer takes a step</text>
+    <g stroke="#374151" stroke-width="3" fill="none" marker-end="url(#arr4)">
+      <path d="M630,60 C760,60 830,90 830,145"/>
+      <path d="M830,230 C830,300 740,330 635,330"/>
+      <path d="M370,330 C250,330 170,300 170,235"/>
+      <path d="M170,150 C170,90 250,60 365,60"/>
+    </g>
+    <text x="500" y="200" text-anchor="middle" font-size="20" fill="#6b7280">repeat for many</text>
+    <text x="500" y="228" text-anchor="middle" font-size="20" fill="#6b7280">batches &amp; epochs</text>
+  </svg>
+  <aside class="notes"><p>Training is a loop of four steps, repeated thousands or millions of times.</p>
+<p>One: <b>feedforward</b>, pushing inputs through the network to get a prediction. Two: <b>compute the loss</b>, how wrong we were. Three: <b>backpropagation</b>, working out how much each weight contributed to the error. Four: <b>update</b> the weights a little using an optimizer.</p>
+<p>Then repeat with the next batch. After all batches, one epoch is done, and we run many epochs.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Feedforward: Data Flows Forward</h2>
+  <svg viewBox="0 0 1000 220" width="100%">
+    <defs><marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker></defs>
+    <g font-size="18" text-anchor="middle">
+      <rect x="10" y="60" width="150" height="80" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="85" y="95" font-weight="700">Input</text><text x="85" y="122">x</text>
+      <rect x="230" y="60" width="200" height="80" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="330" y="95" font-weight="700">Hidden layer</text><text x="330" y="122">a = f(Wx + b)</text>
+      <rect x="500" y="60" width="200" height="80" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="600" y="95" font-weight="700">Output layer</text><text x="600" y="122">ŷ</text>
+      <rect x="770" y="60" width="200" height="80" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="870" y="95" font-weight="700">Loss</text><text x="870" y="122">L(y, ŷ)</text>
+    </g>
+    <g stroke="#2563eb" stroke-width="4" marker-end="url(#arr5)"><line x1="160" y1="100" x2="225" y2="100"/><line x1="430" y1="100" x2="495" y2="100"/><line x1="700" y1="100" x2="765" y2="100"/></g>
+    <text x="500" y="190" text-anchor="middle" font-size="18" fill="#2563eb">→ → → left to right, layer by layer → → →</text>
+  </svg>
+  <p class="small">Each layer $l$ does the same neuron computation on the previous layer's outputs:</p>
+  <div class="eq">$$\mathbf{a}^{(l)} = f\!\left(\mathbf{W}^{(l)}\,\mathbf{a}^{(l-1)} + \mathbf{b}^{(l)}\right)$$</div>
+  <p class="plain">Feedforward is simply "make a prediction": push the inputs through each layer in turn until an answer comes out the other end.</p>
+  <aside class="notes"><p>Feedforward simply means making a prediction. Data flows left to right, layer by layer.</p>
+<p>Each layer does the same neuron computation we've seen, just for many neurons at once using a matrix: multiply by the weights, add the bias, apply the activation.</p>
+<p>The output of one layer becomes the input of the next, until we get the prediction and compare it to the truth with the loss.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Worked Example — Forward Pass</h2>
+  <div class="cols wide-left">
+    <div class="small">
+      <p>One sigmoid neuron. Inputs <span class="blue">$x_1 = 1,\ x_2 = 2$</span>; weights <span class="orange">$w_1 = 0.5,\ w_2 = -0.3$</span>; bias <span class="orange">$b = 0.1$</span>. True answer $y = 1$.</p>
+      <div class="eq">$$z = 0.5(1) + (-0.3)(2) + 0.1 = 0$$</div>
+      <div class="eq">$$\hat y = \sigma(0) = 0.5$$</div>
+      <div class="eq">$$L = (y - \hat y)^2 = (1 - 0.5)^2 = {\color{#dc2626}0.25}$$</div>
+      <p class="plain">The model is only 50% sure when the answer is definitely 1. We need to adjust the weights.</p>
+    </div>
+    <svg viewBox="0 0 420 300" width="100%">
+      <circle cx="50" cy="90" r="30" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><text x="50" y="97" text-anchor="middle" font-size="18">1</text>
+      <circle cx="50" cy="210" r="30" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><text x="50" y="217" text-anchor="middle" font-size="18">2</text>
+      <line x1="80" y1="95" x2="200" y2="140" stroke="#f59e0b" stroke-width="4"/><line x1="80" y1="205" x2="200" y2="160" stroke="#f59e0b" stroke-width="4"/>
+      <text x="130" y="100" font-size="17" fill="#b45309">0.5</text><text x="125" y="215" font-size="17" fill="#b45309">−0.3</text>
+      <circle cx="235" cy="150" r="40" fill="#ede9fe" stroke="#7c3aed" stroke-width="3"/><text x="235" y="145" text-anchor="middle" font-size="15">z = 0</text><text x="235" y="167" text-anchor="middle" font-size="15">σ</text>
+      <text x="235" y="215" text-anchor="middle" font-size="15" fill="#b45309">b = 0.1</text>
+      <line x1="275" y1="150" x2="330" y2="150" stroke="#374151" stroke-width="3"/>
+      <circle cx="365" cy="150" r="32" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/><text x="365" y="157" text-anchor="middle" font-size="18">0.5</text>
+      <text x="365" y="210" text-anchor="middle" font-size="15" fill="#dc2626">target: 1</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>Let's follow real numbers through one sigmoid neuron. Inputs 1 and 2, weights 0.5 and minus 0.3, bias 0.1. The true answer is 1.</p>
+<p>z is 0.5 minus 0.6 plus 0.1, which is exactly 0. Sigmoid of 0 is 0.5.</p>
+<p>Loss: 1 minus 0.5 squared is 0.25.</p>
+<p>The model is sitting on the fence at 50 percent when the answer is definitely 1. How should we change the weights? That's what backprop tells us.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Backpropagation: Assigning the Blame</h2>
+  <svg viewBox="0 0 1000 200" width="100%">
+    <defs><marker id="arr6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker></defs>
+    <g font-size="18" text-anchor="middle">
+      <rect x="10" y="40" width="150" height="80" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="85" y="88" font-weight="700">Input</text>
+      <rect x="230" y="40" width="200" height="80" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="330" y="88" font-weight="700">Hidden layer</text>
+      <rect x="500" y="40" width="200" height="80" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="600" y="88" font-weight="700">Output layer</text>
+      <rect x="770" y="40" width="200" height="80" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="870" y="88" font-weight="700">Loss</text>
+    </g>
+    <g stroke="#dc2626" stroke-width="4" marker-end="url(#arr6)"><line x1="765" y1="100" x2="705" y2="100"/><line x1="495" y1="100" x2="435" y2="100"/><line x1="225" y1="100" x2="165" y2="100"/></g>
+    <text x="500" y="165" text-anchor="middle" font-size="18" fill="#dc2626">← ← ← error signal flows backwards ← ← ←</text>
+  </svg>
+  <ul class="small">
+    <li>Start at the loss and work <b>backwards</b> through each layer</li>
+    <li>For every weight, compute its <b>gradient</b> $\frac{\partial L}{\partial w}$: <i>"if I nudge this weight up a little, how much does the loss change?"</i></li>
+    <li>Positive gradient → lower the weight; negative gradient → raise it</li>
+  </ul>
+  <p class="plain">It's like a team reviewing a lost match: the error is traced back so each player (weight) learns how much they contributed and how to adjust.</p>
+  <aside class="notes"><p>Backpropagation sends the error signal backwards from the loss through each layer.</p>
+<p>For every weight it computes the <b>gradient</b>: if I nudge this weight up slightly, does the loss go up or down, and by how much?</p>
+<p>Positive gradient means increasing the weight increases the loss, so decrease it. Negative gradient means do the opposite.</p>
+<p>The team analogy: after losing a match, you review the game backwards from the final goal to see how much each player contributed, so each can adjust.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Chain Rule — the Engine of Backprop</h2>
+  <p class="small">The loss depends on $w$ through a chain: $w \rightarrow z \rightarrow \hat y \rightarrow L$. So we multiply the effect of each link:</p>
+  <div class="eq big">$$\frac{\partial L}{\partial w_1} = \underbrace{\frac{\partial L}{\partial \hat y}}_{\text{loss vs output}} \cdot \underbrace{\frac{\partial \hat y}{\partial z}}_{\text{activation slope}} \cdot \underbrace{\frac{\partial z}{\partial w_1}}_{\text{input } x_1}$$</div>
+  <table style="margin:auto">
+    <thead><tr><th>Link</th><th>Formula</th><th>Our numbers</th></tr></thead>
+    <tbody>
+      <tr><td>$\partial L/\partial \hat y$</td><td>$-2(y - \hat y)$</td><td>$-2(1-0.5) = -1$</td></tr>
+      <tr><td>$\partial \hat y/\partial z$</td><td>$\sigma(z)(1-\sigma(z))$</td><td>$0.5 \times 0.5 = 0.25$</td></tr>
+      <tr><td>$\partial z/\partial w_1$</td><td>$x_1$</td><td>$1$</td></tr>
+    </tbody>
+  </table>
+  <p class="plain">Gears: if gear A turns gear B twice as fast, and B turns C three times as fast, then A turns C 2 × 3 = 6 times as fast. Backprop just multiplies these "speeds".</p>
+  <aside class="notes"><p>How do we compute these gradients? With the chain rule from calculus. Don't worry, the idea is simple.</p>
+<p>The weight affects z, z affects the prediction, and the prediction affects the loss. It's a chain. To find the weight's effect on the loss, multiply the effect of each link.</p>
+<p>The gears analogy: if gear A turns B twice as fast, and B turns C three times as fast, A turns C six times as fast. Just multiply.</p>
+<p>Our numbers: loss vs prediction is minus 1, sigmoid slope is 0.25, and z vs w1 is just the input, 1.</p>
+<p>Backprop is this chain rule applied efficiently to every weight, reusing shared parts of the computation.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Worked Example — Backward Pass &amp; Update</h2>
+  <div class="cols top">
+    <div class="small">
+      <p><b>Gradients</b> (from the chain rule):</p>
+      <div class="eq">$$\frac{\partial L}{\partial w_1} = -1 \times 0.25 \times 1 = -0.25$$</div>
+      <div class="eq">$$\frac{\partial L}{\partial w_2} = -1 \times 0.25 \times 2 = -0.5$$</div>
+      <div class="eq">$$\frac{\partial L}{\partial b} = -1 \times 0.25 \times 1 = -0.25$$</div>
+    </div>
+    <div class="small">
+      <p><b>Update</b> with learning rate $\eta = 0.1$:</p>
+      <div class="eq">$$w \leftarrow w - \eta\,\frac{\partial L}{\partial w}$$</div>
+      <ul>
+        <li>$w_1 = 0.5 - 0.1(-0.25) = 0.525$</li>
+        <li>$w_2 = -0.3 - 0.1(-0.5) = -0.25$</li>
+        <li>$b = 0.1 - 0.1(-0.25) = 0.125$</li>
+      </ul>
+    </div>
+  </div>
+  <p class="fragment small"><b>Forward pass again:</b> $z = 0.15$, $\hat y = 0.537$, loss $= (1-0.537)^2 = {\color{#16a34a}0.214}$ (it was 0.25) 🎉</p>
+  <p class="fragment plain">One step made the model a little better. Repeat this thousands of times over many examples and the network learns.</p>
+  <aside class="notes"><p>Multiply the links: the gradient for w1 is minus 0.25. For w2 it's minus 0.5, because its input was 2. For the bias it's minus 0.25.</p>
+<p>Update rule: new weight equals old weight minus the learning rate times the gradient. With learning rate 0.1: w1 becomes 0.525, w2 becomes minus 0.25, b becomes 0.125.</p>
+<p>[Click] Run forward again: the prediction is 0.537 and the loss is 0.214, down from 0.25. The model improved!</p>
+<p>[Click] That's one tiny step. Real training repeats this millions of times across all weights and examples. That's all "learning" is.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Which Loss Function Should I Use?</h2>
+  <table style="width:100%">
+    <thead><tr><th>Problem</th><th>Output layer</th><th>Loss function</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><b>Regression</b></td><td>1 neuron, no activation (linear)</td><td><b>MSE</b> (or MAE / Huber if there are outliers)</td><td>House price</td></tr>
+      <tr><td><b>Binary classification</b></td><td>1 neuron, sigmoid</td><td><b>Binary cross-entropy</b></td><td>Fraud or not</td></tr>
+      <tr><td><b>Multiclass</b></td><td>K neurons, softmax</td><td><b>Categorical cross-entropy</b></td><td>Digit 0–9</td></tr>
+      <tr><td><b>Multilabel</b></td><td>K neurons, sigmoid each</td><td><b>Binary cross-entropy</b> per label</td><td>Movie genres</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Why not MSE for classification? Cross-entropy gives <b>much bigger gradients</b> when the model is confidently wrong, so it learns faster and doesn't get stuck.</p>
+  <aside class="notes"><p>Bringing it together: the output layer and the loss go as a pair.</p>
+<p>Regression: linear output with MSE (or MAE / Huber with outliers). Binary: sigmoid with binary cross-entropy. Multiclass: softmax with categorical cross-entropy. Multilabel: sigmoid per label with binary cross-entropy.</p>
+<p>Why not MSE for classification? Combined with sigmoid, MSE gives tiny gradients when the model is confidently wrong, so learning stalls. Cross-entropy gives big gradients exactly when the model is badly wrong, so it learns fast.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== 8. OPTIMIZATION -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #14532d, #65a30d)">
+  <div class="section-num">08</div>
+  <h1>Optimization</h1>
+  <p>Gradient descent, SGD, Momentum, RMSProp, Adam</p>
+  <aside class="notes"><p>Final technical section: optimizers, the algorithms that decide exactly how to update the weights.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Gradient Descent: Walking Downhill Blindfolded</h2>
+  <div class="cols wide-right">
+    <div>
+      <p class="small">You're on a foggy mountain and want to reach the valley. You can only feel the slope under your feet, so you take a step in the <b>steepest downhill direction</b>, again and again.</p>
+      <div class="eq">$$w \leftarrow w - {\color{#7c3aed}\eta}\,{\color{#dc2626}\frac{\partial L}{\partial w}}$$</div>
+      <p class="tiny"><span class="purple">$\eta$</span> = learning rate (step size) &nbsp;·&nbsp; <span class="red">gradient</span> = slope</p>
+    </div>
+    <svg viewBox="0 0 500 330" width="100%">
+      <path d="M50.0,30.0 L63.3,62.2 L76.7,92.2 L90.0,120.0 L103.3,145.6 L116.7,168.9 L130.0,190.0 L143.3,208.9 L156.7,225.6 L170.0,240.0 L183.3,252.2 L196.7,262.2 L210.0,270.0 L223.3,275.6 L236.7,278.9 L250.0,280.0 L263.3,278.9 L276.7,275.6 L290.0,270.0 L303.3,262.2 L316.7,252.2 L330.0,240.0 L343.3,225.6 L356.7,208.9 L370.0,190.0 L383.3,168.9 L396.7,145.6 L410.0,120.0 L423.3,92.2 L436.7,62.2 L450.0,30.0" fill="#f0fdf4" stroke="#16a34a" stroke-width="4"/>
+      <g fill="#2563eb"><circle cx="63.3" cy="62.2" r="9"/><circle cx="103.3" cy="145.6" r="9"/><circle cx="143.3" cy="208.9" r="9"/><circle cx="183.3" cy="252.2" r="9"/><circle cx="216.7" cy="273" r="9"/><circle cx="240" cy="279" r="9"/></g>
+      <g stroke="#dc2626" stroke-width="2.5" fill="none"><path d="M70,70 L97,135"/><path d="M110,155 L137,200"/><path d="M150,216 L176,246"/><path d="M190,257 L208,269"/></g>
+      <text x="70" y="40" font-size="15" fill="#2563eb">start</text>
+      <text x="250" y="310" text-anchor="middle" font-size="15" fill="#16a34a">minimum loss</text>
+      <text x="290" y="160" font-size="14" fill="#6b7280">steps get smaller</text>
+      <text x="290" y="180" font-size="14" fill="#6b7280">as the slope flattens</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>Imagine you're on a mountain in thick fog and want to reach the valley. You can't see, but you can feel the slope under your feet. So you step downhill, feel again, and step again.</p>
+<p>That's gradient descent. The gradient is the slope; the learning rate eta is your step size.</p>
+<p>Notice the steps naturally get smaller near the bottom because the slope flattens out.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Learning Rate Matters</h2>
+  <svg viewBox="0 0 1000 290" width="100%">
+    <g transform="translate(0,0)">
+      <path d="M20,30 Q165,400 310,30" fill="none" stroke="#9ca3af" stroke-width="3"/>
+      <g fill="#2563eb"><circle cx="40" cy="70" r="7"/><circle cx="50" cy="92" r="7"/><circle cx="60" cy="112" r="7"/><circle cx="70" cy="130" r="7"/><circle cx="80" cy="146" r="7"/></g>
+      <text x="165" y="250" text-anchor="middle" font-size="20" font-weight="700" fill="#f59e0b">Too small 🐢</text>
+      <text x="165" y="275" text-anchor="middle" font-size="15">takes forever to arrive</text>
+    </g>
+    <g transform="translate(340,0)">
+      <path d="M20,30 Q165,400 310,30" fill="none" stroke="#9ca3af" stroke-width="3"/>
+      <g fill="#2563eb"><circle cx="40" cy="70" r="7"/><circle cx="85" cy="150" r="7"/><circle cx="125" cy="196" r="7"/><circle cx="155" cy="212" r="7"/></g>
+      <path d="M40,70 L85,150 L125,196 L155,212" fill="none" stroke="#2563eb" stroke-width="2"/>
+      <text x="165" y="250" text-anchor="middle" font-size="20" font-weight="700" fill="#16a34a">Just right ✓</text>
+      <text x="165" y="275" text-anchor="middle" font-size="15">steady, quick convergence</text>
+    </g>
+    <g transform="translate(680,0)">
+      <path d="M20,30 Q165,400 310,30" fill="none" stroke="#9ca3af" stroke-width="3"/>
+      <g fill="#dc2626"><circle cx="90" cy="160" r="7"/><circle cx="260" cy="125" r="7"/><circle cx="45" cy="80" r="7"/><circle cx="300" cy="45" r="7"/></g>
+      <path d="M90,160 L260,125 L45,80 L300,45" fill="none" stroke="#dc2626" stroke-width="2"/>
+      <text x="165" y="250" text-anchor="middle" font-size="20" font-weight="700" fill="#dc2626">Too large 🚀</text>
+      <text x="165" y="275" text-anchor="middle" font-size="15">overshoots and bounces away</text>
+    </g>
+  </svg>
+  <p class="plain">Typical starting values: 0.1 for SGD, 0.001 for Adam. If the loss explodes, lower it; if it barely moves, raise it.</p>
+  <aside class="notes"><p>The learning rate is the most important hyperparameter.</p>
+<p>Too small: you creep along and training takes forever. Just right: steady progress to the bottom. Too large: you overshoot, bounce from side to side, and can even fly off with the loss exploding.</p>
+<p>Rules of thumb: start with about 0.1 for SGD and 0.001 for Adam. If the loss explodes or shows NaN, lower it. If it barely moves, raise it.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Batch GD vs SGD vs Mini-batch</h2>
+  <div class="cols wide-left">
+    <table>
+      <thead><tr><th>Method</th><th>Examples per update</th><th>Behaviour</th></tr></thead>
+      <tbody>
+        <tr><td><b>Batch GD</b></td><td>all of them</td><td>smooth but slow; needs lots of memory</td></tr>
+        <tr><td><b>Stochastic GD (SGD)</b></td><td>1</td><td>very fast, very noisy (zig-zags)</td></tr>
+        <tr><td><b>Mini-batch</b> ⭐</td><td>e.g. 32–256</td><td>best of both — the standard choice</td></tr>
+      </tbody>
+    </table>
+    <svg viewBox="0 0 360 300" width="100%">
+      <g fill="none" stroke="#d1d5db" stroke-width="2">
+        <ellipse cx="270" cy="150" rx="250" ry="130"/><ellipse cx="270" cy="150" rx="180" ry="95"/><ellipse cx="270" cy="150" rx="110" ry="58"/><ellipse cx="270" cy="150" rx="40" ry="22"/>
+      </g>
+      <circle cx="270" cy="150" r="6" fill="#16a34a"/>
+      <path d="M30,60 L110,95 L180,120 L235,140 L265,149" fill="none" stroke="#2563eb" stroke-width="3"/>
+      <path d="M30,240 L60,190 L85,230 L115,175 L140,215 L165,165 L190,195 L210,150 L235,175 L250,145 L268,158" fill="none" stroke="#dc2626" stroke-width="3"/>
+      <text x="40" y="45" font-size="15" fill="#2563eb">Batch: smooth path</text>
+      <text x="40" y="275" font-size="15" fill="#dc2626">SGD: noisy path</text>
+    </svg>
+  </div>
+  <p class="plain">In practice, when people say "SGD" they usually mean <b>mini-batch</b> SGD. The noise can even help escape bad spots.</p>
+  <aside class="notes"><p>How much data do we use to compute each step?</p>
+<p><b>Batch gradient descent</b> uses all the data for every step: accurate, smooth path, but slow and memory-hungry with millions of examples.</p>
+<p><b>Stochastic gradient descent</b> uses one example per step: very fast but noisy. See the zig-zag path.</p>
+<p><b>Mini-batch</b>, typically 32 to 256 examples, is the best of both and what everyone uses. When people say "SGD" in practice they usually mean mini-batch. The bit of noise even helps escape poor spots in the landscape.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Momentum: A Ball Rolling Downhill</h2>
+  <div class="cols wide-left">
+    <div>
+      <p class="small">Plain SGD forgets the past at every step. <b>Momentum</b> keeps a running "velocity" — an average of past gradients:</p>
+      <div class="eq">$$v \leftarrow \beta\, v + (1-\beta)\, g$$</div>
+      <div class="eq">$$w \leftarrow w - \eta\, v$$</div>
+      <p class="tiny">$g$ = current gradient, $\beta \approx 0.9$ = how much of the past to remember</p>
+      <p class="plain">Like a heavy ball: it builds speed in consistent directions and smooths out the zig-zags.</p>
+    </div>
+    <svg viewBox="0 0 360 260" width="100%">
+      <path d="M10,30 Q180,380 350,30" fill="none" stroke="#9ca3af" stroke-width="3"/>
+      <circle cx="70" cy="100" r="18" fill="#2563eb"/>
+      <path d="M95,115 Q120,150 150,165" stroke="#2563eb" stroke-width="3" fill="none" stroke-dasharray="5 4"/>
+      <text x="180" y="245" text-anchor="middle" font-size="15">gains speed on long slopes</text>
+    </svg>
+  </div>
+  <aside class="notes"><p>Plain SGD only looks at the current slope. Momentum adds memory: it keeps a running average of recent gradients, like velocity.</p>
+<p>Picture a heavy ball rolling downhill. It builds speed on long consistent slopes and doesn't get knocked around by every little bump.</p>
+<p>Beta, typically 0.9, controls how much past gradients count. The result is faster progress and less zig-zagging.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>RMSProp: A Custom Step Size for Every Weight</h2>
+  <div class="eq">$$s \leftarrow \beta\, s + (1-\beta)\, g^2 \qquad\qquad w \leftarrow w - \frac{\eta}{\sqrt{s} + \epsilon}\, g$$</div>
+  <ul class="small">
+    <li>$s$ tracks a running average of <b>squared gradients</b> — how big this weight's gradients usually are</li>
+    <li>Weights with <b>big, jumpy</b> gradients → divide by a big number → <b>smaller steps</b></li>
+    <li>Weights with <b>tiny</b> gradients → divide by a small number → <b>bigger steps</b></li>
+    <li>$\epsilon \approx 10^{-8}$ just prevents dividing by zero; $\beta \approx 0.9$</li>
+  </ul>
+  <p class="plain">Like adjusting your stride to the terrain: careful, small steps on steep, rocky ground; long strides on flat ground.</p>
+  <aside class="notes"><p>RMSProp solves a different problem: different weights need different step sizes.</p>
+<p>It keeps a running average of each weight's squared gradients, a measure of how big and jumpy its gradients usually are. Then it divides the step by the square root of that.</p>
+<p>So weights with big, noisy gradients take smaller, careful steps, and weights with tiny gradients take bigger steps. Epsilon is just a tiny number to avoid dividing by zero.</p>
+<p>Hiking analogy: small careful steps on steep rocky ground, long strides on flat ground.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Adam = Momentum + RMSProp</h2>
+  <div class="cols top">
+    <div class="small">
+      <div class="eq">$$m \leftarrow \beta_1 m + (1-\beta_1)\, g \quad\text{(momentum: direction)}$$</div>
+      <div class="eq">$$v \leftarrow \beta_2 v + (1-\beta_2)\, g^2 \quad\text{(RMSProp: scale)}$$</div>
+      <div class="eq">$$\hat m = \frac{m}{1-\beta_1^t}, \quad \hat v = \frac{v}{1-\beta_2^t} \quad\text{(bias correction)}$$</div>
+      <div class="eq">$$w \leftarrow w - \eta\,\frac{\hat m}{\sqrt{\hat v} + \epsilon}$$</div>
+    </div>
+    <div class="small">
+      <div class="card">
+        <h3>Default settings (work well almost always)</h3>
+        <ul>
+          <li>$\eta = 0.001$</li>
+          <li>$\beta_1 = 0.9$ — memory for gradients</li>
+          <li>$\beta_2 = 0.999$ — memory for squared gradients</li>
+          <li>$\epsilon = 10^{-8}$</li>
+        </ul>
+      </div>
+      <p class="tiny muted">Bias correction: $m$ and $v$ start at 0, so early averages are too small; dividing by $(1-\beta^t)$ fixes this for the first few steps $t$.</p>
+    </div>
+  </div>
+  <p class="plain">Adam knows <b>which way</b> to go (momentum) and <b>how big a step</b> each weight should take (RMSProp). It's the go-to default optimizer.</p>
+  <aside class="notes"><p>Adam (short for Adaptive Moment Estimation) combines both ideas. m is the momentum term, which gives the direction. v is the RMSProp term, which gives the step size per weight.</p>
+<p>Bias correction: m and v start at zero, so their early values are too small. Dividing by 1 minus beta to the power t boosts them during the first steps. After a while this correction fades away.</p>
+<p>The default settings (learning rate 0.001, beta1 0.9, beta2 0.999) work well for most problems out of the box. That's why Adam is the default choice for most people.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Optimizers Compared</h2>
+  <div class="cols wide-left">
+    <table>
+      <thead><tr><th>Optimizer</th><th>Key idea</th><th>When to use</th></tr></thead>
+      <tbody>
+        <tr><td><b>SGD</b></td><td>step against the gradient</td><td>simple baseline; with tuning can generalise very well</td></tr>
+        <tr><td><b>SGD + Momentum</b></td><td>remember past direction</td><td>computer vision (CNNs) — popular with a learning-rate schedule</td></tr>
+        <tr><td><b>RMSProp</b></td><td>per-weight step size</td><td>recurrent networks, noisy problems</td></tr>
+        <tr><td><b>Adam</b> ⭐</td><td>momentum + per-weight step</td><td>default first choice — fast, little tuning</td></tr>
+      </tbody>
+    </table>
+    <svg viewBox="0 0 360 300" width="100%">
+      <g fill="none" stroke="#d1d5db" stroke-width="2">
+        <ellipse cx="270" cy="150" rx="250" ry="70"/><ellipse cx="270" cy="150" rx="180" ry="50"/><ellipse cx="270" cy="150" rx="110" ry="30"/><ellipse cx="270" cy="150" rx="40" ry="11"/>
+      </g>
+      <circle cx="270" cy="150" r="6" fill="#16a34a"/>
+      <path d="M40,120 L60,180 L80,122 L100,176 L120,126 L140,172 L160,130 L180,166 L200,136 L220,160 L240,142" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+      <path d="M40,120 C110,140 180,148 268,150" fill="none" stroke="#7c3aed" stroke-width="3.5"/>
+      <text x="20" y="60" font-size="15" fill="#dc2626">SGD: zig-zags across the valley</text>
+      <text x="20" y="250" font-size="15" fill="#7c3aed">Adam: heads straight to the minimum</text>
+    </svg>
+  </div>
+  <p class="note">Start with <b>Adam (lr = 0.001)</b>. If you need the last bit of accuracy and have time to tune, try SGD + momentum with a learning-rate schedule.</p>
+  <aside class="notes"><p>Summary: SGD is the simple baseline. SGD with momentum is still popular for computer vision with a learning-rate schedule and can generalise very well. RMSProp is good for recurrent networks. Adam is the default first choice.</p>
+<p>The picture shows a long narrow valley. SGD zig-zags across it; Adam heads almost straight for the minimum because it adapts the step for each direction.</p>
+<p>Practical advice: start with Adam at 0.001. If you need the last bit of accuracy, experiment with SGD plus momentum.</p>
+  </aside>
+</section>
+
+<!-- ===================================================== SUMMARY -->
+<section class="section-title" data-background-gradient="linear-gradient(135deg, #1e3a8a, #7c3aed)">
+  <div class="section-num">✓</div>
+  <h1>Putting It All Together</h1>
+  <aside class="notes"><p>Let's zoom out and connect everything we've seen.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>The Big Picture</h2>
+  <svg viewBox="0 0 1000 400" width="100%">
+    <defs><marker id="arr7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#374151"/></marker></defs>
+    <g font-size="17" text-anchor="middle">
+      <rect x="10" y="40" width="170" height="90" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="95" y="75" font-weight="700">Data</text><text x="95" y="100">features x</text><text x="95" y="120">labels y</text>
+      <rect x="230" y="40" width="200" height="90" rx="12" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/><text x="330" y="75" font-weight="700">Model</text><text x="330" y="100">regression, logistic,</text><text x="330" y="120">neural network</text>
+      <rect x="480" y="40" width="200" height="90" rx="12" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="580" y="75" font-weight="700">Loss</text><text x="580" y="100">MSE /</text><text x="580" y="120">cross-entropy</text>
+      <rect x="730" y="40" width="250" height="90" rx="12" fill="#e0f2fe" stroke="#0891b2" stroke-width="2"/><text x="855" y="75" font-weight="700">Backpropagation</text><text x="855" y="100">gradients via</text><text x="855" y="120">chain rule</text>
+      <rect x="730" y="200" width="250" height="90" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="855" y="235" font-weight="700">Optimizer</text><text x="855" y="260">SGD / Momentum /</text><text x="855" y="280">RMSProp / Adam</text>
+      <rect x="400" y="200" width="250" height="90" rx="12" fill="#f3f4f6" stroke="#6b7280" stroke-width="2"/><text x="525" y="235" font-weight="700">Updated weights</text><text x="525" y="260">repeat until the</text><text x="525" y="280">loss stops improving</text>
+      <rect x="40" y="200" width="290" height="90" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="185" y="235" font-weight="700">Evaluate on test data</text><text x="185" y="260">regression: MSE / RMSE</text><text x="185" y="280">classification: P / R / F1</text>
+    </g>
+    <g stroke="#374151" stroke-width="3" marker-end="url(#arr7)" fill="none">
+      <line x1="180" y1="85" x2="226" y2="85"/><line x1="430" y1="85" x2="476" y2="85"/><line x1="680" y1="85" x2="726" y2="85"/>
+      <line x1="855" y1="130" x2="855" y2="196"/><line x1="730" y1="245" x2="654" y2="245"/>
+      <path d="M525,200 C525,160 330,170 330,134"/>
+      <line x1="400" y1="245" x2="334" y2="245"/>
+    </g>
+    <text x="430" y="170" font-size="15" fill="#6b7280">training loop</text>
+    <text x="500" y="350" text-anchor="middle" font-size="18" fill="#374151">Hyperparameters (learning rate, layers, batch size, epochs…) are tuned using a validation set.</text>
+  </svg>
+  <aside class="notes"><p>This one diagram is the whole session.</p>
+<p>We start with <b>data</b>: features and labels. A <b>model</b> makes predictions. The <b>loss</b> measures how wrong they are. <b>Backpropagation</b> computes gradients using the chain rule. The <b>optimizer</b> updates the weights. We repeat this training loop until the loss stops improving.</p>
+<p>Finally we <b>evaluate</b> on test data: MSE or RMSE for regression, precision, recall and F1 for classification. Hyperparameters are tuned along the way using the validation set.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Glossary</h2>
+  <div class="cols top small">
+    <ul>
+      <li><b>Feature</b> — an input variable (x)</li>
+      <li><b>Label</b> — the answer to predict (y)</li>
+      <li><b>Regression</b> — predict a number</li>
+      <li><b>Classification</b> — predict a category</li>
+      <li><b>Loss</b> — how wrong the model is</li>
+      <li><b>Weight / bias</b> — learned parameters</li>
+      <li><b>Hidden layer</b> — layer between input and output that learns new features</li>
+      <li><b>Activation</b> — adds non-linearity (ReLU, sigmoid)</li>
+      <li><b>Softmax</b> — scores → probabilities that sum to 1</li>
+    </ul>
+    <ul>
+      <li><b>Epoch</b> — one pass over all training data</li>
+      <li><b>Batch</b> — examples per weight update</li>
+      <li><b>Gradient</b> — slope of the loss for a weight</li>
+      <li><b>Backprop</b> — computing gradients backwards</li>
+      <li><b>Learning rate</b> — step size</li>
+      <li><b>Overfitting</b> — memorising instead of learning</li>
+      <li><b>Precision</b> — trust in a "yes"</li>
+      <li><b>Recall</b> — share of real "yes" cases found</li>
+    </ul>
+  </div>
+  <aside class="notes"><p>A quick-reference glossary of every key term from today. This is a good slide to share or photograph.</p>
+<p>Optionally, quiz the audience: point to a term and ask someone to explain it in their own words.</p>
+  </aside>
+</section>
+
+<section>
+  <h2>Next Steps</h2>
+  <ul>
+    <li>🐍 Try <b>scikit-learn</b>: <code>LinearRegression</code>, <code>LogisticRegression</code>, <code>classification_report</code></li>
+    <li>🔥 Build a small network in <b>PyTorch</b> or <b>Keras</b> on the MNIST digits dataset</li>
+    <li>🎮 Play with the <a href="https://playground.tensorflow.org">TensorFlow Playground</a> to see neurons and layers learn live</li>
+    <li>📚 Watch <i>3Blue1Brown — Neural Networks</i> for beautiful visual intuition</li>
+  </ul>
+  <p class="plain">Every ML model follows the same recipe: <b>predict → measure the loss → compute gradients → update → repeat</b>.</p>
+  <aside class="notes"><p>If you want to continue: scikit-learn is the easiest place to start; you can train logistic regression in about five lines and print a classification report with precision, recall and F1.</p>
+<p>Then try PyTorch or Keras on the MNIST digits, the 784-128-10 network we counted parameters for.</p>
+<p>TensorFlow Playground is excellent: in your browser you can add hidden layers, change activations and watch them learn live. 3Blue1Brown's neural network videos give beautiful visual intuition for backprop.</p>
+<p>And remember the one recipe behind all of it: predict, measure the loss, compute gradients, update, repeat.</p>
+  </aside>
+</section>
+
+<section class="center" data-background-gradient="linear-gradient(135deg, #1e3a8a, #7c3aed)">
+  <h1 style="color:white">Thank you!</h1>
+  <p style="color:#e0e7ff">Questions?</p>
+  <aside class="notes"><p>Thank you all for your time and attention. I'm Satendra Kumar. Happy to take any questions now.</p>
+<p>[If time is short] Suggest people reach out afterwards; the slides will be shared.</p>
+<p>Backup slides to jump to for common questions: press Esc for the overview. Popular ones are the confusion matrix, the activation cheat sheet and the backprop worked example.</p>
+  </aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280,
+    height: 760,
+    margin: 0.04,
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    center: true,
+    katex: {
+      version: 'latest',
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false }
+      ],
+      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'svg']
+    },
+    plugins: [RevealMath.KaTeX, RevealNotes]
+  });
+</script>
+</body>
+</html>
